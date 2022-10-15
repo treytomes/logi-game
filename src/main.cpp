@@ -2,33 +2,14 @@
 
 #include <iostream>
 #include <stack>
+#include <fstream>
 using namespace std;
 
-class GameState {
-	private:
-		bool _isLeaving;
+#define JSON_USE_IMPLICIT_CONVERSIONS 0
+#include "json.hpp"
+using json = nlohmann::json;
 
-	protected:
-		void leave();
-
-	public:
-		GameState();
-		virtual void updateFrame() = 0;
-		virtual void renderFrame(SDL_Renderer* renderer) = 0;
-		bool isLeaving();
-};
-
-GameState::GameState()
-	: _isLeaving(false) {
-}
-
-void GameState::leave() {
-	_isLeaving = true;
-}
-
-bool GameState::isLeaving() {
-	return _isLeaving;
-}
+#include "GameState.h"
 
 class SampleGameState: public GameState {
 	public:
@@ -72,13 +53,37 @@ SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 stack<GameState*> states;
 
+json createSettings() {
+	json settings;
+	settings["graphics"]["width"] = 640;
+	settings["graphics"]["height"] = 480;
+	
+	ofstream o("settings.json");
+	o << setw(4) << settings << endl;
+	return settings;
+}
+
+#define PATH_SETTINGS "settings.json"
+json getSettings() {
+	ifstream f(PATH_SETTINGS);
+	if (f.good()) {
+		return json::parse(f);
+	} else {
+		return createSettings();
+	}
+}
+
 bool init() {
+	json settings = getSettings();
+
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		cerr << "Unable to initialize SDL." << endl;
 		return false;
 	}
 
-	if (!SDL_CreateWindowAndRenderer(640, 480, 0, &window, &renderer) == 0) {
+	int width = settings["graphics"]["width"].get<int>();
+	int height = settings["graphics"]["height"].get<int>();
+	if (!SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer) == 0) {
 		cerr << "Unable to create renderer." << endl;
 		return false;
 	}
