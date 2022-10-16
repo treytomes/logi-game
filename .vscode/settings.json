@@ -1,0 +1,9 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/trey/projects/logi-game/bin",
+            "binaryPath": "/home/trey/projects/logi-game/bin/logi-game",
+            "binaryArgs": []
+        }
+    ]
+}

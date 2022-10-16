@@ -8,7 +8,7 @@ BUILD_DIR := ./build
 BIN_DIR := ./bin
 SRC_LIST := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_LIST := $(BUILD_DIR)/$(notdir $(SRC_LIST:.cpp=.o))
-COMPILER_FLAGS := $(INCLUDE_DIR) -std=c++11
+COMPILER_FLAGS := $(INCLUDE_DIR) -std=c++11 -g -Wall
 
 FLAGS_SDL2 := `sdl2-config --cflags --libs`
 LINKER_FLAGS = $(FLAGS_SDL2)

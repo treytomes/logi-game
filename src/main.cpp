@@ -11,47 +11,171 @@ using json = nlohmann::json;
 
 #include "GameState.h"
 
-class SampleGameState: public GameState {
+#define PATH_SETTINGS "settings.json"
+
+class Rectangle {
+	private:
+		int _x;
+		int _y;
+		int _width;
+		int _height;
+
 	public:
+		Rectangle(int x, int y, int width, int height);
+
+		int getX();
+		void setX(int x);
+
+		int getY();
+		void setY(int y);
+
+		int getWidth();
+		void setWidth(int width);
+
+		int getHeight();
+		void setHeight(int height);
+
+		int getTop();
+		int getBottom();
+		int getLeft();
+		int getRight();
+
+		bool contains(int x, int y);
+};
+
+Rectangle::Rectangle(int x, int y, int width, int height)
+	: _x(x), _y(y), _width(width), _height(height) {
+}
+
+int Rectangle::getX() {
+	return _x;
+}
+
+void Rectangle::setX(int x) {
+	_x = x;
+}
+
+int Rectangle::getY() {
+	return _y;
+}
+
+void Rectangle::setY(int y) {
+	_y = y;
+}
+
+int Rectangle::getWidth() {
+	return _width;
+}
+
+void Rectangle::setWidth(int width) {
+	_width = width;
+}
+
+int Rectangle::getHeight() {
+	return _height;
+}
+
+void Rectangle::setHeight(int height) {
+	_height = height;
+}
+
+int Rectangle::getTop() {
+	return getY();
+}
+
+int Rectangle::getBottom() {
+	return getY() + getHeight() - 1;
+}
+
+int Rectangle::getLeft() {
+	return getX();
+}
+
+int Rectangle::getRight() {
+	return getX() + getWidth() - 1;
+}
+
+bool Rectangle::contains(int x, int y) {
+	return (getLeft() <= x) && (x <= getRight()) && (getTop() <= y) && (y <= getBottom());
+}
+
+class SampleGameState: public GameState {
+	private:
+		bool _isDragging;
+		bool _isHovering;
+		Rectangle _rect;
+
+	public:
+		SampleGameState();
+
+		void pollEvents();
+		bool onKeyDown(SDL_KeyboardEvent key);
+		bool onMouseButtonDown(SDL_MouseButtonEvent button);
+		bool onMouseButtonUp(SDL_MouseButtonEvent button);
+		bool onMouseMotion(SDL_MouseMotionEvent motion);
+
 		void updateFrame();
 		void renderFrame(SDL_Renderer* renderer);
 };
 
-void SampleGameState::updateFrame() {
-	SDL_Event event;
+SampleGameState::SampleGameState()
+	: _isDragging(false), _isHovering(false), _rect(200, 200, 64, 32) {
+}
 
-	while (SDL_PollEvent(&event)) {
-		if (event.type == SDL_KEYDOWN) {
-			if (event.key.keysym.sym == SDLK_ESCAPE) {
-				leave();
-			}
-		}
-		if (event.type == SDL_QUIT) {
-			leave();
-		}
+bool SampleGameState::onKeyDown(SDL_KeyboardEvent key) {
+	if (key.keysym.sym == SDLK_ESCAPE) {
+		leave();
+		return true;
 	}
+	return false;
+}
+
+void SampleGameState::updateFrame() {
 }
 
 void SampleGameState::renderFrame(SDL_Renderer* renderer) {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
 
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawLine(renderer, 320, 200, 300, 240);
-	SDL_RenderDrawLine(renderer, 300, 240, 340, 240);
-	SDL_RenderDrawLine(renderer, 340, 240, 320, 200);
+	if (_isDragging) {
+		SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+	} else if (_isHovering) {
+		SDL_SetRenderDrawColor(renderer, 255, 255, 0, SDL_ALPHA_OPAQUE);
+	} else {
+		SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
+	}
+
+	SDL_RenderDrawLine(renderer, _rect.getLeft(), _rect.getTop(), _rect.getLeft(), _rect.getBottom());
+	SDL_RenderDrawLine(renderer, _rect.getRight(), _rect.getTop(), _rect.getRight(), _rect.getBottom());
+	SDL_RenderDrawLine(renderer, _rect.getLeft(), _rect.getTop(), _rect.getRight(), _rect.getTop());
+	SDL_RenderDrawLine(renderer, _rect.getLeft(), _rect.getBottom(), _rect.getRight(), _rect.getBottom());
 	SDL_RenderPresent(renderer);
 }
 
-void updateFrame() {
+bool SampleGameState::onMouseButtonDown(SDL_MouseButtonEvent button) {
+	if (_isHovering) {
+		_isDragging = true;
+	}
+	return _isHovering;
 }
 
-void renderFrame(SDL_Renderer* renderer) {
+bool SampleGameState::onMouseButtonUp(SDL_MouseButtonEvent button) {
+	_isDragging = false;
+	return true;
+}
+
+bool SampleGameState::onMouseMotion(SDL_MouseMotionEvent motion) {
+	_isHovering = _rect.contains(motion.x, motion.y);
+	if (_isDragging) {
+		_rect.setX(_rect.getX() + motion.xrel);
+		_rect.setY(_rect.getY() + motion.yrel);
+	}
+	return _isDragging;
 }
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
-stack<GameState*> states;
+vector<GameState*> states;
 
 json createSettings() {
 	json settings;
@@ -63,7 +187,6 @@ json createSettings() {
 	return settings;
 }
 
-#define PATH_SETTINGS "settings.json"
 json getSettings() {
 	ifstream f(PATH_SETTINGS);
 	if (f.good()) {
@@ -88,7 +211,7 @@ bool init() {
 		return false;
 	}
 	
-	states.push(new SampleGameState());
+	states.push_back(new SampleGameState());
 	return true;
 }
 
@@ -103,6 +226,20 @@ void shutdown() {
 	SDL_Quit();
 }
 
+void pollEvents() {
+	states.back()->pollEvents();
+
+	// Consume any events not used by the state.
+	SDL_Event event;
+	while (SDL_PollEvent(&event)) {
+		if (event.type == SDL_QUIT) {
+			for (vector<GameState*>::iterator iter = states.begin(); iter != states.end(); iter++) {
+				(*iter)->leave();
+			}
+		}
+	}
+}
+
 int main(int argc, char* argv[]) {
 	if (!init()) {
 		shutdown();
@@ -110,11 +247,13 @@ int main(int argc, char* argv[]) {
 	}
 
 	while (!states.empty()) {
-		states.top()->renderFrame(renderer);
-		states.top()->updateFrame();
-		if (states.top()->isLeaving()) {
-			delete states.top();
-			states.pop();
+		states.back()->updateFrame();
+		states.back()->renderFrame(renderer);
+
+		pollEvents();
+		if (states.back()->isLeaving()) {
+			delete states.back();
+			states.pop_back();
 		}
 	}
 
