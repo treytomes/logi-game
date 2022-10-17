@@ -5,5 +5,8 @@
             "binaryPath": "/home/trey/projects/logi-game/bin/logi-game",
             "binaryArgs": []
         }
-    ]
+    ],
+    "files.associations": {
+        "iostream": "cpp"
+    }
 }

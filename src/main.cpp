@@ -1,4 +1,6 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 
 #include <iostream>
 #include <stack>
@@ -10,103 +12,20 @@ using namespace std;
 using json = nlohmann::json;
 
 #include "GameState.h"
+#include "Rectangle.h"
 
 #define PATH_SETTINGS "settings.json"
-
-class Rectangle {
-	private:
-		int _x;
-		int _y;
-		int _width;
-		int _height;
-
-	public:
-		Rectangle(int x, int y, int width, int height);
-
-		int getX();
-		void setX(int x);
-
-		int getY();
-		void setY(int y);
-
-		int getWidth();
-		void setWidth(int width);
-
-		int getHeight();
-		void setHeight(int height);
-
-		int getTop();
-		int getBottom();
-		int getLeft();
-		int getRight();
-
-		bool contains(int x, int y);
-};
-
-Rectangle::Rectangle(int x, int y, int width, int height)
-	: _x(x), _y(y), _width(width), _height(height) {
-}
-
-int Rectangle::getX() {
-	return _x;
-}
-
-void Rectangle::setX(int x) {
-	_x = x;
-}
-
-int Rectangle::getY() {
-	return _y;
-}
-
-void Rectangle::setY(int y) {
-	_y = y;
-}
-
-int Rectangle::getWidth() {
-	return _width;
-}
-
-void Rectangle::setWidth(int width) {
-	_width = width;
-}
-
-int Rectangle::getHeight() {
-	return _height;
-}
-
-void Rectangle::setHeight(int height) {
-	_height = height;
-}
-
-int Rectangle::getTop() {
-	return getY();
-}
-
-int Rectangle::getBottom() {
-	return getY() + getHeight() - 1;
-}
-
-int Rectangle::getLeft() {
-	return getX();
-}
-
-int Rectangle::getRight() {
-	return getX() + getWidth() - 1;
-}
-
-bool Rectangle::contains(int x, int y) {
-	return (getLeft() <= x) && (x <= getRight()) && (getTop() <= y) && (y <= getBottom());
-}
 
 class SampleGameState: public GameState {
 	private:
 		bool _isDragging;
 		bool _isHovering;
 		Rectangle _rect;
+		TTF_Font* _font;
 
 	public:
 		SampleGameState();
+		~SampleGameState();
 
 		void pollEvents();
 		bool onKeyDown(SDL_KeyboardEvent key);
@@ -120,6 +39,15 @@ class SampleGameState: public GameState {
 
 SampleGameState::SampleGameState()
 	: _isDragging(false), _isHovering(false), _rect(200, 200, 64, 32) {
+	_font = TTF_OpenFont("./assets/fonts/UbuntuMono/UbuntuMono-Regular.ttf", 16);
+	if (!_font) {
+		cerr << "Error loading font: " << TTF_GetError() << endl;
+	}
+}
+
+SampleGameState::~SampleGameState() {
+	TTF_CloseFont(_font);
+	_font = nullptr;
 }
 
 bool SampleGameState::onKeyDown(SDL_KeyboardEvent key) {
@@ -149,6 +77,25 @@ void SampleGameState::renderFrame(SDL_Renderer* renderer) {
 	SDL_RenderDrawLine(renderer, _rect.getRight(), _rect.getTop(), _rect.getRight(), _rect.getBottom());
 	SDL_RenderDrawLine(renderer, _rect.getLeft(), _rect.getTop(), _rect.getRight(), _rect.getTop());
 	SDL_RenderDrawLine(renderer, _rect.getLeft(), _rect.getBottom(), _rect.getRight(), _rect.getBottom());
+
+	SDL_Color textColor;
+	textColor.r = 255;
+	textColor.g = 255;
+	textColor.b = 255;
+	textColor.a = 255;
+	SDL_Surface* textSurface = TTF_RenderText_Solid(_font, "Hello, world!", textColor);
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+
+	SDL_Rect dest;
+	dest.x = 320 - (textSurface->w / 2.0f);
+	dest.y = 240;
+	dest.w = textSurface->w;
+	dest.h = textSurface->h;
+	SDL_RenderCopy(renderer, textTexture, NULL, &dest);
+
+	SDL_DestroyTexture(textTexture);
+	SDL_FreeSurface(textSurface);
+
 	SDL_RenderPresent(renderer);
 }
 
@@ -200,17 +147,27 @@ bool init() {
 	json settings = getSettings();
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		cerr << "Unable to initialize SDL." << endl;
+		cerr << "Unable to initialize SDL: " << SDL_GetError() << endl;
 		return false;
 	}
 
 	int width = settings["graphics"]["width"].get<int>();
 	int height = settings["graphics"]["height"].get<int>();
 	if (!SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer) == 0) {
-		cerr << "Unable to create renderer." << endl;
+		cerr << "Unable to create renderer: " << SDL_GetError() << endl;
 		return false;
 	}
 	
+	if (IMG_Init(IMG_INIT_PNG) < 0) {
+		cerr << "Error initializing SDL_image: " << IMG_GetError() << endl;
+		return false;
+	}
+
+	if (TTF_Init() < 0) {
+		cerr << "Error intializing SDL_ttf: " << TTF_GetError() << endl;
+		return false;
+	}
+
 	states.push_back(new SampleGameState());
 	return true;
 }
@@ -223,6 +180,8 @@ void shutdown() {
 		SDL_DestroyWindow(window);
 	}
 
+	TTF_Quit();
+	IMG_Quit();
 	SDL_Quit();
 }
 
