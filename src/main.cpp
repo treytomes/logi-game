@@ -22,6 +22,7 @@ class SampleGameState: public GameState {
 		bool _isHovering;
 		Rectangle _rect;
 		TTF_Font* _font;
+		SDL_Texture* _texture;
 
 	public:
 		SampleGameState();
@@ -33,6 +34,7 @@ class SampleGameState: public GameState {
 		bool onMouseButtonUp(SDL_MouseButtonEvent button);
 		bool onMouseMotion(SDL_MouseMotionEvent motion);
 
+		void enter(SDL_Renderer* renderer);
 		void updateFrame();
 		void renderFrame(SDL_Renderer* renderer);
 };
@@ -48,6 +50,9 @@ SampleGameState::SampleGameState()
 SampleGameState::~SampleGameState() {
 	TTF_CloseFont(_font);
 	_font = nullptr;
+
+	SDL_DestroyTexture(_texture);
+	_texture = nullptr;
 }
 
 bool SampleGameState::onKeyDown(SDL_KeyboardEvent key) {
@@ -56,6 +61,19 @@ bool SampleGameState::onKeyDown(SDL_KeyboardEvent key) {
 		return true;
 	}
 	return false;
+}
+
+void SampleGameState::enter(SDL_Renderer* renderer) {
+	SDL_Surface* buffer = IMG_Load("./assets/bootstrap-icons-1.9.1/alarm-fill.svg");
+	if (!buffer) {
+		cerr << "Error loading image alarm.svg: " << SDL_GetError() << endl;
+	}
+
+	_texture = SDL_CreateTextureFromSurface(renderer, buffer);
+	SDL_FreeSurface(buffer);
+	if (!_texture) {
+		cerr << "Error creating texture: " << SDL_GetError() << endl;
+	}
 }
 
 void SampleGameState::updateFrame() {
@@ -95,6 +113,13 @@ void SampleGameState::renderFrame(SDL_Renderer* renderer) {
 
 	SDL_DestroyTexture(textTexture);
 	SDL_FreeSurface(textSurface);
+
+	dest.x = 100;
+	dest.y = 100;
+	dest.w = 16;
+	dest.h = 16;
+	SDL_SetTextureColorMod(_texture, 255, 0, 255);
+	SDL_RenderCopy(renderer, _texture, NULL, &dest);
 
 	SDL_RenderPresent(renderer);
 }
@@ -169,6 +194,7 @@ bool init() {
 	}
 
 	states.push_back(new SampleGameState());
+	states.back()->enter(renderer);
 	return true;
 }
 

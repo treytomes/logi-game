@@ -81,3 +81,6 @@ bool GameState::onTextEditing(SDL_TextEditingEvent edit) {
 bool GameState::onTextInput(SDL_TextInputEvent text) {
 	return false;
 }
+
+void GameState::enter(SDL_Renderer* renderer) {
+}

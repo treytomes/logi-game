@@ -23,6 +23,7 @@ class GameState {
 		virtual bool onTextEditing(SDL_TextEditingEvent edit);
 		virtual bool onTextInput(SDL_TextInputEvent text);
 
+		virtual void enter(SDL_Renderer* renderer);
 		virtual void updateFrame() = 0;
 		virtual void renderFrame(SDL_Renderer* renderer) = 0;
 		void leave();

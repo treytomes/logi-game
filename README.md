@@ -12,3 +12,5 @@ Logstics/logic circuit simulation game.
     * [Documentation.](https://json.nlohmann.me/)
 * [Ubuntu Mono font family.](https://fonts.google.com/specimen/Ubuntu+Mono)
     * [License](https://ubuntu.com/legal/font-licence)
+* [Bootstrap Icons v1.9.1](https://github.com/twbs/icons/releases/tag/v1.9.1)
+    * Changed all colors from `currentColor` to `white`.
