@@ -1,3 +1,5 @@
+#include <libintl.h>
+#include <locale.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
@@ -13,6 +15,8 @@ using json = nlohmann::json;
 
 #include "GameState.h"
 #include "Rectangle.h"
+
+#define _(STRING) gettext(STRING)
 
 #define PATH_SETTINGS "settings.json"
 
@@ -101,7 +105,8 @@ void SampleGameState::renderFrame(SDL_Renderer* renderer) {
 	textColor.g = 255;
 	textColor.b = 255;
 	textColor.a = 255;
-	SDL_Surface* textSurface = TTF_RenderText_Solid(_font, "Hello, world!", textColor);
+
+	SDL_Surface* textSurface = TTF_RenderText_Solid(_font, _("Hello, world!"), textColor);
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
 	SDL_Rect dest;
@@ -170,6 +175,11 @@ json getSettings() {
 
 bool init() {
 	json settings = getSettings();
+
+	/* Setting the i18n environment */
+	setlocale(LC_ALL, "");
+	bindtextdomain("logi-game", "./locale");
+	textdomain("logi-game");
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		cerr << "Unable to initialize SDL: " << SDL_GetError() << endl;

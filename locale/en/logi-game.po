@@ -1,0 +1,22 @@
+# English translations for Logi-Game package.
+# Copyright (C) 2022 THE Logi-Game'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Logi-Game package.
+# Trey <trey.tomes@gmail.com>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Logi-Game 1.0\n"
+"Report-Msgid-Bugs-To: trey.tomes@gmail.com\n"
+"POT-Creation-Date: 2022-10-19 07:04-0500\n"
+"PO-Revision-Date: 2022-10-19 07:12-0500\n"
+"Last-Translator: Trey <trey.tomes@gmail.com>\n"
+"Language-Team: English\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/main.cpp:109
+msgid "Hello, world!"
+msgstr "Bonjour le monde!"

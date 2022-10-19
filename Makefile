@@ -6,6 +6,7 @@ SRC_DIR := ./src
 INCLUDE_DIR := ./include
 BUILD_DIR := ./build
 BIN_DIR := ./bin
+LOCALE_DIR := ./locale
 SRC_LIST := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_LIST := $(BUILD_DIR)/$(notdir $(SRC_LIST:.cpp=.o))
 COMPILER_FLAGS := $(INCLUDE_DIR) -std=c++11 -g -Wall
@@ -15,7 +16,7 @@ LINKER_FLAGS = $(FLAGS_SDL2) -lSDL2_ttf -lSDL2_image
 
 all: logi-game
 
-logi-game: main.o GameState.o Rectangle.o
+logi-game: main.o GameState.o Rectangle.o logi-game.mo
 	g++ $(BUILD_DIR)/main.o $(BUILD_DIR)/GameState.o $(BUILD_DIR)/Rectangle.o -o $(BIN_DIR)/logi-game $(CFLAGS_SDL2) $(LINKER_FLAGS)
 
 main.o:
@@ -26,6 +27,9 @@ GameState.o:
 
 Rectangle.o:
 	g++ -c $(SRC_DIR)/Rectangle.cpp -o $(BUILD_DIR)/Rectangle.o -I $(COMPILER_FLAGS)
+
+logi-game.mo:
+	msgfmt --output-file=locale/en/LC_MESSAGES/logi-game.mo locale/en/logi-game.po
 
 clean:
 	rm -f $(BIN_DIR)/logi-game $(BUILD_DIR)/*.o
