@@ -47,7 +47,7 @@ SampleGameState::SampleGameState()
 	: _isDragging(false), _isHovering(false), _rect(200, 200, 64, 32) {
 	_font = TTF_OpenFont("./assets/fonts/UbuntuMono/UbuntuMono-Regular.ttf", 16);
 	if (!_font) {
-		cerr << "Error loading font: " << TTF_GetError() << endl;
+		cerr << _("Error loading font: ") << TTF_GetError() << endl;
 	}
 }
 
@@ -70,13 +70,13 @@ bool SampleGameState::onKeyDown(SDL_KeyboardEvent key) {
 void SampleGameState::enter(SDL_Renderer* renderer) {
 	SDL_Surface* buffer = IMG_Load("./assets/bootstrap-icons-1.9.1/alarm-fill.svg");
 	if (!buffer) {
-		cerr << "Error loading image alarm.svg: " << SDL_GetError() << endl;
+		cerr << _("Error loading image alarm.svg: ") << SDL_GetError() << endl;
 	}
 
 	_texture = SDL_CreateTextureFromSurface(renderer, buffer);
 	SDL_FreeSurface(buffer);
 	if (!_texture) {
-		cerr << "Error creating texture: " << SDL_GetError() << endl;
+		cerr << _("Error creating texture: ") << SDL_GetError() << endl;
 	}
 }
 
@@ -182,24 +182,24 @@ bool init() {
 	textdomain("logi-game");
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		cerr << "Unable to initialize SDL: " << SDL_GetError() << endl;
+		cerr << _("Unable to initialize SDL: ") << SDL_GetError() << endl;
 		return false;
 	}
 
 	int width = settings["graphics"]["width"].get<int>();
 	int height = settings["graphics"]["height"].get<int>();
 	if (!SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer) == 0) {
-		cerr << "Unable to create renderer: " << SDL_GetError() << endl;
+		cerr << _("Unable to create renderer: ") << SDL_GetError() << endl;
 		return false;
 	}
 	
 	if (IMG_Init(IMG_INIT_PNG) < 0) {
-		cerr << "Error initializing SDL_image: " << IMG_GetError() << endl;
+		cerr << _("Error initializing SDL_image: ") << IMG_GetError() << endl;
 		return false;
 	}
 
 	if (TTF_Init() < 0) {
-		cerr << "Error intializing SDL_ttf: " << TTF_GetError() << endl;
+		cerr << _("Error intializing SDL_ttf: ") << TTF_GetError() << endl;
 		return false;
 	}
 

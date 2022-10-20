@@ -16,7 +16,7 @@ To compile the .mo file (also handled by the Makefile):
 `msgfmt --output-file=locale/en/LC_MESSAGES/logi-game.mo locale/en/logi-game.po`
 
 When new strings are added to the source, re-generate the pot file and merge the new strings into the language files:
-`msgmerge --update po/en/logi-game.po locale/logi-game.pot`
+`msgmerge --update locale/en/logi-game.po locale/logi-game.pot`
 
 Learned to do this from the tutorial [here](https://www.labri.fr/perso/fleury/posts/programming/a-quick-gettext-tutorial.html).
 

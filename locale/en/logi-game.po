@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Logi-Game 1.0\n"
-"Report-Msgid-Bugs-To: trey.tomes@gmail.com\n"
-"POT-Creation-Date: 2022-10-19 07:04-0500\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-10-20 08:22-0500\n"
 "PO-Revision-Date: 2022-10-19 07:12-0500\n"
 "Last-Translator: Trey <trey.tomes@gmail.com>\n"
 "Language-Team: English\n"
@@ -17,6 +17,34 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: src/main.cpp:79
+msgid "Error creating texture: "
+msgstr ""
+
+#: src/main.cpp:197
+msgid "Error initializing SDL_image: "
+msgstr ""
+
+#: src/main.cpp:202
+msgid "Error intializing SDL_ttf: "
+msgstr ""
+
+#: src/main.cpp:50
+msgid "Error loading font: "
+msgstr ""
+
+#: src/main.cpp:73
+msgid "Error loading image alarm.svg: "
+msgstr ""
+
 #: src/main.cpp:109
 msgid "Hello, world!"
-msgstr "Bonjour le monde!"
+msgstr "Hello, world!"
+
+#: src/main.cpp:192
+msgid "Unable to create renderer: "
+msgstr ""
+
+#: src/main.cpp:185
+msgid "Unable to initialize SDL: "
+msgstr ""
