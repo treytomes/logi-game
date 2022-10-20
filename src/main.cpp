@@ -22,9 +22,20 @@ using json = nlohmann::json;
 #define PATH_SETTINGS "settings.json"
 
 inline void setRenderColor(SDL_Renderer* renderer, Color color) {
-	if (SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a) == 0) {
+	if (SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a) != 0) {
 		cerr << _("Unable to set render color: ") << SDL_GetError() << endl;
 	}
+}
+
+void renderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, int x, int y, Color color = Color(255, 255, 255)) {
+	SDL_Surface* textSurface = TTF_RenderText_Solid(font, text, color);
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+
+	Rectangle textRect(x, y, textSurface->w, textSurface->h);
+	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+
+	SDL_DestroyTexture(textTexture);
+	SDL_FreeSurface(textSurface);
 }
 
 inline void setTextureColor(SDL_Texture* texture, Color color) {
@@ -179,19 +190,9 @@ void SampleGameState::renderFrame(SDL_Renderer* renderer) {
 	} else {
 		_border->setBorderColor(255, 0, 0);
 	}
-
 	_border->render(renderer);
 
-	Color textColor(255, 255, 255);
-
-	SDL_Surface* textSurface = TTF_RenderText_Solid(_font, _("Hello, world!"), textColor);
-	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-
-	Rectangle textRect(320 - (textSurface->w / 2.0f), 240, textSurface->w, textSurface->h);
-	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
-
-	SDL_DestroyTexture(textTexture);
-	SDL_FreeSurface(textSurface);
+	renderText(renderer, _font, _("Hello, world!"), 320, 240, Color(255, 200, 0));
 
 	Rectangle imageRect(100, 100, 16, 16);
 	setTextureColor(_texture, Color(255, 0, 255));
