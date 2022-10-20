@@ -15,16 +15,90 @@ using json = nlohmann::json;
 
 #include "GameState.h"
 #include "Rectangle.h"
+#include "Color.h"
 
 #define _(STRING) gettext(STRING)
 
 #define PATH_SETTINGS "settings.json"
 
+inline void setRenderColor(SDL_Renderer* renderer, Color color) {
+	if (SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a) == 0) {
+		cerr << _("Unable to set render color: ") << SDL_GetError() << endl;
+	}
+}
+
+inline void setTextureColor(SDL_Texture* texture, Color color) {
+	if (SDL_SetTextureColorMod(texture, color.r, color.g, color.b) != 0) {
+		cerr << _("Unable to set texture color: ") << SDL_GetError() << endl;
+	}
+}
+
+class Border {
+	private:
+		Color _borderColor;
+		Color _backgroundColor;
+		Rectangle* _rect;
+
+	public:
+		Border(Rectangle rect);
+		Border(int x, int y, int width, int height);
+		~Border();
+		void render(SDL_Renderer* renderer);
+
+		inline Rectangle* getRect() { return _rect; }
+		inline Color getBorderColor() { return _borderColor; }
+		inline void setBorderColor(Color c) { _borderColor = c; }
+		void setBorderColor(int r, int g, int b, int a = 255);
+		inline Color getBackgroundColor() { return _backgroundColor; }
+		inline void setBackgroundColor(Color c) { _backgroundColor = c; }
+		void setBackgroundColor(int r, int g, int b, int a = 255);
+};
+
+Border::Border(Rectangle rect)
+	: _borderColor(255, 255, 255), _backgroundColor(255, 255, 255), _rect(new Rectangle(rect)) {
+}
+
+Border::Border(int x, int y, int width, int height)
+	: Border(Rectangle(x, y, width, height)) {
+}
+
+Border::~Border() {
+	if (_rect != nullptr) {
+		delete _rect;
+		_rect = nullptr;
+	}
+}
+
+void Border::render(SDL_Renderer* renderer) {
+	setRenderColor(renderer, _backgroundColor);
+	SDL_RenderFillRect(renderer, _rect);
+
+	setRenderColor(renderer, _borderColor);
+	SDL_RenderDrawLine(renderer, _rect->getLeft(), _rect->getTop(), _rect->getLeft(), _rect->getBottom());
+	SDL_RenderDrawLine(renderer, _rect->getRight(), _rect->getTop(), _rect->getRight(), _rect->getBottom());
+	SDL_RenderDrawLine(renderer, _rect->getLeft(), _rect->getTop(), _rect->getRight(), _rect->getTop());
+	SDL_RenderDrawLine(renderer, _rect->getLeft(), _rect->getBottom(), _rect->getRight(), _rect->getBottom());
+}
+
+void Border::setBorderColor(int r, int g, int b, int a) {
+	_borderColor.r = r;
+	_borderColor.g = g;
+	_borderColor.b = b;
+	_borderColor.a = a;
+}
+
+void Border::setBackgroundColor(int r, int g, int b, int a) {
+	_backgroundColor.r = r;
+	_backgroundColor.g = g;
+	_backgroundColor.b = b;
+	_backgroundColor.a = a;
+}
+
 class SampleGameState: public GameState {
 	private:
 		bool _isDragging;
 		bool _isHovering;
-		Rectangle _rect;
+		Border* _border;
 		TTF_Font* _font;
 		SDL_Texture* _texture;
 
@@ -44,19 +118,30 @@ class SampleGameState: public GameState {
 };
 
 SampleGameState::SampleGameState()
-	: _isDragging(false), _isHovering(false), _rect(200, 200, 64, 32) {
+	: _isDragging(false), _isHovering(false) {
 	_font = TTF_OpenFont("./assets/fonts/UbuntuMono/UbuntuMono-Regular.ttf", 16);
 	if (!_font) {
 		cerr << _("Error loading font: ") << TTF_GetError() << endl;
 	}
+
+	_border = new Border(200, 200, 64, 32);
 }
 
 SampleGameState::~SampleGameState() {
-	TTF_CloseFont(_font);
-	_font = nullptr;
+	if (_border != nullptr) {
+		delete _border;
+		_border = nullptr;
+	}
 
-	SDL_DestroyTexture(_texture);
-	_texture = nullptr;
+	if (_font != nullptr) {
+		TTF_CloseFont(_font);
+		_font = nullptr;
+	}
+
+	if (_texture != nullptr) {
+		SDL_DestroyTexture(_texture);
+		_texture = nullptr;
+	}
 }
 
 bool SampleGameState::onKeyDown(SDL_KeyboardEvent key) {
@@ -84,47 +169,33 @@ void SampleGameState::updateFrame() {
 }
 
 void SampleGameState::renderFrame(SDL_Renderer* renderer) {
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+	setRenderColor(renderer, Color(0, 0, 0));
 	SDL_RenderClear(renderer);
 
 	if (_isDragging) {
-		SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+		_border->setBorderColor(0, 255, 0);
 	} else if (_isHovering) {
-		SDL_SetRenderDrawColor(renderer, 255, 255, 0, SDL_ALPHA_OPAQUE);
+		_border->setBorderColor(255, 255, 0);
 	} else {
-		SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
+		_border->setBorderColor(255, 0, 0);
 	}
 
-	SDL_RenderDrawLine(renderer, _rect.getLeft(), _rect.getTop(), _rect.getLeft(), _rect.getBottom());
-	SDL_RenderDrawLine(renderer, _rect.getRight(), _rect.getTop(), _rect.getRight(), _rect.getBottom());
-	SDL_RenderDrawLine(renderer, _rect.getLeft(), _rect.getTop(), _rect.getRight(), _rect.getTop());
-	SDL_RenderDrawLine(renderer, _rect.getLeft(), _rect.getBottom(), _rect.getRight(), _rect.getBottom());
+	_border->render(renderer);
 
-	SDL_Color textColor;
-	textColor.r = 255;
-	textColor.g = 255;
-	textColor.b = 255;
-	textColor.a = 255;
+	Color textColor(255, 255, 255);
 
 	SDL_Surface* textSurface = TTF_RenderText_Solid(_font, _("Hello, world!"), textColor);
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
-	SDL_Rect dest;
-	dest.x = 320 - (textSurface->w / 2.0f);
-	dest.y = 240;
-	dest.w = textSurface->w;
-	dest.h = textSurface->h;
-	SDL_RenderCopy(renderer, textTexture, NULL, &dest);
+	Rectangle textRect(320 - (textSurface->w / 2.0f), 240, textSurface->w, textSurface->h);
+	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
 
 	SDL_DestroyTexture(textTexture);
 	SDL_FreeSurface(textSurface);
 
-	dest.x = 100;
-	dest.y = 100;
-	dest.w = 16;
-	dest.h = 16;
-	SDL_SetTextureColorMod(_texture, 255, 0, 255);
-	SDL_RenderCopy(renderer, _texture, NULL, &dest);
+	Rectangle imageRect(100, 100, 16, 16);
+	setTextureColor(_texture, Color(255, 0, 255));
+	SDL_RenderCopy(renderer, _texture, NULL, &imageRect);
 
 	SDL_RenderPresent(renderer);
 }
@@ -142,10 +213,9 @@ bool SampleGameState::onMouseButtonUp(SDL_MouseButtonEvent button) {
 }
 
 bool SampleGameState::onMouseMotion(SDL_MouseMotionEvent motion) {
-	_isHovering = _rect.contains(motion.x, motion.y);
+	_isHovering = _border->getRect()->contains(motion.x, motion.y);
 	if (_isDragging) {
-		_rect.setX(_rect.getX() + motion.xrel);
-		_rect.setY(_rect.getY() + motion.yrel);
+		_border->getRect()->moveBy(motion.xrel, motion.yrel);
 	}
 	return _isDragging;
 }

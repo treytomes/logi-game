@@ -16,8 +16,12 @@ LINKER_FLAGS = $(FLAGS_SDL2) -lSDL2_ttf -lSDL2_image
 
 all: logi-game
 
-logi-game: main.o GameState.o Rectangle.o logi-game.mo
-	g++ $(BUILD_DIR)/main.o $(BUILD_DIR)/GameState.o $(BUILD_DIR)/Rectangle.o -o $(BIN_DIR)/logi-game $(CFLAGS_SDL2) $(LINKER_FLAGS)
+text:
+	xgettext --keyword=_ --language=C++ --add-comments --sort-output -o locale/logi-game.pot src/main.cpp
+	msgmerge --update locale/en/logi-game.po locale/logi-game.pot
+
+logi-game: main.o GameState.o Rectangle.o Color.o logi-game.mo
+	g++ $(BUILD_DIR)/main.o $(BUILD_DIR)/GameState.o $(BUILD_DIR)/Rectangle.o $(BUILD_DIR)/Color.o -o $(BIN_DIR)/logi-game $(CFLAGS_SDL2) $(LINKER_FLAGS)
 
 main.o:
 	g++ -c $(SRC_DIR)/main.cpp -o $(BUILD_DIR)/main.o -I $(COMPILER_FLAGS)
@@ -27,6 +31,9 @@ GameState.o:
 
 Rectangle.o:
 	g++ -c $(SRC_DIR)/Rectangle.cpp -o $(BUILD_DIR)/Rectangle.o -I $(COMPILER_FLAGS)
+
+Color.o:
+	g++ -c $(SRC_DIR)/Color.cpp -o $(BUILD_DIR)/Color.o -I $(COMPILER_FLAGS)
 
 logi-game.mo:
 	msgfmt --output-file=locale/en/LC_MESSAGES/logi-game.mo locale/en/logi-game.po

@@ -1,39 +1,10 @@
 #include "Rectangle.h"
 
-Rectangle::Rectangle(int x, int y, int width, int height)
-	: _x(x), _y(y), _width(width), _height(height) {
-}
-
-int Rectangle::getX() {
-	return _x;
-}
-
-void Rectangle::setX(int x) {
-	_x = x;
-}
-
-int Rectangle::getY() {
-	return _y;
-}
-
-void Rectangle::setY(int y) {
-	_y = y;
-}
-
-int Rectangle::getWidth() {
-	return _width;
-}
-
-void Rectangle::setWidth(int width) {
-	_width = width;
-}
-
-int Rectangle::getHeight() {
-	return _height;
-}
-
-void Rectangle::setHeight(int height) {
-	_height = height;
+Rectangle::Rectangle(int _x, int _y, int width, int height) {
+	x = _x;
+	y = _y;
+	w = width;
+	h = height;
 }
 
 int Rectangle::getTop() {
@@ -54,4 +25,14 @@ int Rectangle::getRight() {
 
 bool Rectangle::contains(int x, int y) {
 	return (getLeft() <= x) && (x <= getRight()) && (getTop() <= y) && (y <= getBottom());
+}
+
+void Rectangle::moveTo(int x, int y) {
+	setX(x);
+	setY(y);
+}
+
+void Rectangle::moveBy(int x, int y) {
+	setX(getX() + x);
+	setY(getY() + y);
 }

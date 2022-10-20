@@ -1,27 +1,24 @@
 #ifndef __RECTANGLE_H__
 #define __RECTANGLE_H__
 
-class Rectangle {
-	private:
-		int _x;
-		int _y;
-		int _width;
-		int _height;
+#include <SDL2/SDL.h>
 
+class Rectangle: public SDL_Rect {
 	public:
 		Rectangle(int x, int y, int width, int height);
+		Rectangle(SDL_Rect rect) : Rectangle(rect.x, rect.y, rect.w, rect.h) {}
 
-		int getX();
-		void setX(int x);
+		inline int getX() { return x; }
+		inline void setX(int _x) { x = _x; }
 
-		int getY();
-		void setY(int y);
+		inline int getY() { return y; }
+		inline void setY(int _y) { y = _y; }
 
-		int getWidth();
-		void setWidth(int width);
+		inline int getWidth() { return w; }
+		inline void setWidth(int width) { w = width; }
 
-		int getHeight();
-		void setHeight(int height);
+		inline int getHeight() { return h; }
+		inline void setHeight(int height) { h = height; }
 
 		int getTop();
 		int getBottom();
@@ -29,6 +26,8 @@ class Rectangle {
 		int getRight();
 
 		bool contains(int x, int y);
+		void moveTo(int x, int y);
+		void moveBy(int x, int y);
 };
 
 #endif
