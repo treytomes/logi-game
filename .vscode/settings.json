@@ -35,6 +35,7 @@
         "valarray": "cpp",
         "any": "cpp",
         "stdexcept": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "exception": "cpp"
     }
 }

@@ -4,6 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/include",
+                "${workspaceFolder}/test/src",
                 "/usr/include",
                 "/usr/include/x86_64-linux-gnu",
                 "/usr/lib/gcc/x86_64-linux-gnu/11/include"

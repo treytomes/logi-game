@@ -9,7 +9,7 @@ BIN_DIR := ./bin
 LOCALE_DIR := ./locale
 SRC_LIST := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_LIST := $(BUILD_DIR)/$(notdir $(SRC_LIST:.cpp=.o))
-COMPILER_FLAGS := $(INCLUDE_DIR) -std=c++17 -g -Wall
+COMPILER_FLAGS := -I $(INCLUDE_DIR) -std=c++17 -g -Wall
 
 FLAGS_SDL2 := `sdl2-config --cflags --libs`
 LINKER_FLAGS = $(FLAGS_SDL2) -lSDL2_ttf -lSDL2_image
@@ -32,22 +32,22 @@ logi-game: main.o Color.o FontResource.o GameState.o Rectangle.o ResourceFactory
 		-o $(BIN_DIR)/logi-game $(CFLAGS_SDL2) $(LINKER_FLAGS)
 
 main.o:
-	g++ -c $(SRC_DIR)/main.cpp -o $(BUILD_DIR)/main.o -I $(COMPILER_FLAGS)
+	g++ -c $(SRC_DIR)/main.cpp -o $(BUILD_DIR)/main.o $(COMPILER_FLAGS)
 
 Color.o:
-	g++ -c $(SRC_DIR)/Color.cpp -o $(BUILD_DIR)/Color.o -I $(COMPILER_FLAGS)
+	g++ -c $(SRC_DIR)/Color.cpp -o $(BUILD_DIR)/Color.o $(COMPILER_FLAGS)
 
 FontResource.o:
-	g++ -c $(SRC_DIR)/FontResource.cpp -o $(BUILD_DIR)/FontResource.o -I $(COMPILER_FLAGS)
+	g++ -c $(SRC_DIR)/FontResource.cpp -o $(BUILD_DIR)/FontResource.o $(COMPILER_FLAGS)
 
 GameState.o:
-	g++ -c $(SRC_DIR)/GameState.cpp -o $(BUILD_DIR)/GameState.o -I $(COMPILER_FLAGS)
+	g++ -c $(SRC_DIR)/GameState.cpp -o $(BUILD_DIR)/GameState.o $(COMPILER_FLAGS)
 
 Rectangle.o:
-	g++ -c $(SRC_DIR)/Rectangle.cpp -o $(BUILD_DIR)/Rectangle.o -I $(COMPILER_FLAGS)
+	g++ -c $(SRC_DIR)/Rectangle.cpp -o $(BUILD_DIR)/Rectangle.o $(COMPILER_FLAGS)
 
 ResourceFactory.o:
-	g++ -c $(SRC_DIR)/ResourceFactory.cpp -o $(BUILD_DIR)/ResourceFactory.o -I $(COMPILER_FLAGS)
+	g++ -c $(SRC_DIR)/ResourceFactory.cpp -o $(BUILD_DIR)/ResourceFactory.o $(COMPILER_FLAGS)
 
 logi-game.mo:
 	msgfmt --output-file=locale/en/LC_MESSAGES/logi-game.mo locale/en/logi-game.po
@@ -58,7 +58,7 @@ logi-game-tests: test/src/main.o
 	test/bin/logi-game-tests
 
 test/src/main.o:
-	g++ -c test/src/main.cpp -o test/build/main.o -I $(COMPILER_FLAGS)
+	g++ -c test/src/main.cpp -o test/build/main.o $(COMPILER_FLAGS)
 
 clean:
 	rm -f $(BIN_DIR)/logi-game $(BUILD_DIR)/*.o test/bin/logi-game-tests test/build/*.o
