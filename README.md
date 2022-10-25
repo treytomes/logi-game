@@ -2,6 +2,9 @@
 
 Logstics/logic circuit simulation game.
 
+## References
+* [Neural Representation of AND, OR, NOT, XOR and XNOR Logic Gates (Perceptron Algorithm)](https://medium.com/@stanleydukor/neural-representation-of-and-or-not-xor-and-xnor-logic-gates-perceptron-algorithm-b0275375fea1)
+
 ## Internationalization
 
 Internationalization is handled by gettext.

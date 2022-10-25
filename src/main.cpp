@@ -1,23 +1,27 @@
-#include <libintl.h>
-#include <locale.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
-#include <iostream>
-#include <stack>
+#include <libintl.h>
+#include <locale.h>
+#define _(STRING) gettext(STRING)
+
 #include <fstream>
+#include <iostream>
+#include <map>
+#include <stack>
 using namespace std;
 
 #define JSON_USE_IMPLICIT_CONVERSIONS 0
 #include "json.hpp"
 using json = nlohmann::json;
 
+#include "Color.h"
+#include "FontResource.h"
 #include "GameState.h"
 #include "Rectangle.h"
-#include "Color.h"
-
-#define _(STRING) gettext(STRING)
+#include "Resource.h"
+#include "ResourceFactory.h"
 
 #define PATH_SETTINGS "settings.json"
 
@@ -43,6 +47,9 @@ inline void setTextureColor(SDL_Texture* texture, Color color) {
 		cerr << _("Unable to set texture color: ") << SDL_GetError() << endl;
 	}
 }
+
+// TODO: Need a better logging system.
+#include "ResourceFactory.h"
 
 class Border {
 	private:
@@ -110,7 +117,6 @@ class SampleGameState: public GameState {
 		bool _isDragging;
 		bool _isHovering;
 		Border* _border;
-		TTF_Font* _font;
 		SDL_Texture* _texture;
 
 	public:
@@ -130,10 +136,7 @@ class SampleGameState: public GameState {
 
 SampleGameState::SampleGameState()
 	: _isDragging(false), _isHovering(false) {
-	_font = TTF_OpenFont("./assets/fonts/UbuntuMono/UbuntuMono-Regular.ttf", 16);
-	if (!_font) {
-		cerr << _("Error loading font: ") << TTF_GetError() << endl;
-	}
+	ResourceFactory::get()->load<FontResource>("fontMain", "./assets/fonts/fontMain.json");
 
 	_border = new Border(200, 200, 64, 32);
 }
@@ -142,11 +145,6 @@ SampleGameState::~SampleGameState() {
 	if (_border != nullptr) {
 		delete _border;
 		_border = nullptr;
-	}
-
-	if (_font != nullptr) {
-		TTF_CloseFont(_font);
-		_font = nullptr;
 	}
 
 	if (_texture != nullptr) {
@@ -192,7 +190,8 @@ void SampleGameState::renderFrame(SDL_Renderer* renderer) {
 	}
 	_border->render(renderer);
 
-	renderText(renderer, _font, _("Hello, world!"), 320, 240, Color(255, 200, 0));
+	renderText(renderer, ResourceFactory::get()->get<FontResource>("fontMain")->getValue(), _("Hello, world!"), 320, 240, Color(255, 200, 0));
+	//renderText(renderer, _font, _("Hello, world!"), 320, 240, Color(255, 200, 0));
 
 	Rectangle imageRect(100, 100, 16, 16);
 	setTextureColor(_texture, Color(255, 0, 255));
@@ -280,6 +279,8 @@ bool init() {
 }
 
 void shutdown() {
+	ResourceFactory::shutdown();
+
 	if (renderer) {
 		SDL_DestroyRenderer(renderer);
 	}
