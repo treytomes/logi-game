@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include <algorithm>
+#include <exception>
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -9,39 +10,29 @@ using namespace std;
 // TODO: Use std::exception.
 // TODO: Cost is related to computational complexity.
 
-class Exception {
-    private:
-        string _text;
-
-    public:
-        Exception(string text = ""): _text(text) {}
-        virtual ~Exception() {}
-        inline virtual string getText() { return _text; }
-};
-
 template<typename TValue>
-class AssertException: public Exception {
+class AssertException: public exception {
     private:
         TValue _expectedValue;
         TValue _actualValue;
 
     public:
         AssertException(TValue expectedValue, TValue actualValue)
-            : Exception(), _expectedValue(expectedValue), _actualValue(actualValue) {
+            : exception(), _expectedValue(expectedValue), _actualValue(actualValue) {
         }
 
         inline TValue getExpectedValue() { return _expectedValue; }
         inline TValue getActualValue() { return _actualValue; }
 
-        string getText() {
+        const char* what() {
             stringstream ss;
             ss << "Expected " << getExpectedValue() << ", found " << getActualValue() << ".";
-            return ss.str();
+            return ss.str().c_str();
         }
 };
 
 template<typename TValue>
-class OutOfRangeException: public Exception {
+class OutOfRangeException: public range_error {
     private:
         TValue _value;
         TValue _minimum;
@@ -49,35 +40,35 @@ class OutOfRangeException: public Exception {
 
     public:
         OutOfRangeException(TValue value, TValue minimum, TValue maximum)
-            : Exception(), _value(value), _minimum(minimum), _maximum(maximum) {
+            : range_error(""), _value(value), _minimum(minimum), _maximum(maximum) {
         }
 
         inline TValue getValue() { return _value; }
         inline TValue getMinimum() { return _minimum; }
         inline TValue getMaximum() { return _maximum; }
 
-        string getText() {
+        const char* what() {
             stringstream ss;
             ss << getValue() << " must be between " << getMinimum() << " and " << getMaximum() << ".";
-            return ss.str();
+            return ss.str().c_str();
         }
 };
 
-class ArgumentNullException: public Exception {
+class ArgumentNullException: public exception {
     private:
         string _argumentName;
 
     public:
         ArgumentNullException(string argumentName)
-            : Exception(), _argumentName(argumentName) {
+            : exception(), _argumentName(argumentName) {
         }
 
         inline string getArgumentName() { return _argumentName; }
 
-        string getText() {
+        const char* what() {
             stringstream ss;
             ss << getArgumentName() << " was null.";
-            return ss.str();
+            return ss.str().c_str();
         }
 };
 
@@ -145,28 +136,28 @@ class Perceptron: public IHasOutput {
 
         inline void setWeight(int n, float value) {
             if ((n < 0) || (n >= getNumInputs())) {
-                throw new OutOfRangeException(n, 0, getNumInputs());
+                throw OutOfRangeException(n, 0, getNumInputs());
             }
             _weights[n] = value;
         }
 
         inline float getWeight(int n) {
             if ((n < 0) || (n >= getNumInputs())) {
-                throw new OutOfRangeException(n, 0, getNumInputs());
+                throw OutOfRangeException(n, 0, getNumInputs());
             }
             return _weights[n];
         }
 
         inline void setInput(int n, float value) {
             if ((n < 0) || (n >= getNumInputs())) {
-                throw new OutOfRangeException(n, 0, getNumInputs());
+                throw OutOfRangeException(n, 0, getNumInputs());
             }
             _inputs[n] = value;
         }
 
         inline float getInput(int n) {
             if ((n < 0) || (n >= getNumInputs())) {
-                throw new OutOfRangeException(n, 0, getNumInputs());
+                throw OutOfRangeException(n, 0, getNumInputs());
             }
             return _inputs[n];
         }
@@ -232,7 +223,7 @@ class PerceptronWireConnection {
         PerceptronWireConnection(Perceptron* target, int inputNumber)
             : _target(target), _inputNumber(inputNumber) {
             if (target == nullptr) {
-                throw new ArgumentNullException("target");
+                throw ArgumentNullException("target");
             }
         }
 
@@ -249,7 +240,7 @@ class PerceptronWire {
         PerceptronWire(IHasOutput* source)
             : _source(source) {
             if (source == nullptr) {
-                throw new ArgumentNullException("source");
+                throw ArgumentNullException("source");
             }
         }
 
@@ -274,7 +265,7 @@ class PerceptronWire {
 
         PerceptronWire* connectTo(Perceptron* target, int inputNumber) {
             if (target == nullptr) {
-                throw new ArgumentNullException("target");
+                throw ArgumentNullException("target");
             }
             if (!isConnected(target)) {
                 _targets.push_back(new PerceptronWireConnection(target, inputNumber));
@@ -344,14 +335,14 @@ class Circuit {
 
         void setInput(int inputNumber, float value) {
             if ((inputNumber < 0) || (inputNumber >= (int)_inputs.size())) {
-                throw new OutOfRangeException(inputNumber, 0, (int)_inputs.size());
+                throw OutOfRangeException(inputNumber, 0, (int)_inputs.size());
             }
             _inputs[inputNumber]->setOutput(value);
         }
 
         float getOutput(int outputNumber) {
             if ((outputNumber < 0) || (outputNumber >= (int)_outputs.size())) {
-                throw new OutOfRangeException(outputNumber, 0, (int)_outputs.size());
+                throw OutOfRangeException(outputNumber, 0, (int)_outputs.size());
             }
             return _outputs[outputNumber]->getOutput();
         }
@@ -374,7 +365,7 @@ class TestSuite {
         template<typename TValue>
         void assertEqual(TValue expectedValue, TValue actualValue) {
             if (expectedValue != actualValue) {
-                throw new AssertException(expectedValue, actualValue);
+                throw AssertException(expectedValue, actualValue);
             }
         }
 
@@ -392,9 +383,8 @@ class TestSuiteBase: public TestSuite {
                 TDerivedClass* derived = (TDerivedClass*)this;
                 (derived->*fn)();
                 cout << "\\--Passed." << endl;
-            } catch (Exception* e) {
-                cout << "\\--Failed: " << e->getText() << endl;
-                delete e;
+            } catch (exception& e) {
+                cout << "\\--Failed: " << e.what() << endl;
             }
         }
 
@@ -434,9 +424,9 @@ class PerceptronTests: public TestSuiteBase<PerceptronTests> {
 
                 p0->setInput(0, 1);
                 assertEqual(0.0f, p0->getOutput());
-            } catch (Exception* e) {
+            } catch (exception& e) {
                 delete p0;
-                throw e;
+                throw;
             }
 
             delete p0;
@@ -460,9 +450,9 @@ class PerceptronTests: public TestSuiteBase<PerceptronTests> {
                 p0->setInput(0, 1);
                 p0->setInput(1, 1);
                 assertEqual(1.0f, p0->getOutput());
-            } catch (Exception* e) {
+            } catch (exception& e) {
                 delete p0;
-                throw e;
+                throw;
             }
 
             delete p0;
@@ -486,9 +476,9 @@ class PerceptronTests: public TestSuiteBase<PerceptronTests> {
                 p0->setInput(0, 1);
                 p0->setInput(1, 1);
                 assertEqual(1.0f, p0->getOutput());
-            } catch (Exception* e) {
+            } catch (exception& e) {
                 delete p0;
-                throw e;
+                throw;
             }
 
             delete p0;
@@ -512,9 +502,9 @@ class PerceptronTests: public TestSuiteBase<PerceptronTests> {
                 p0->setInput(0, 1);
                 p0->setInput(1, 1);
                 assertEqual(0.0f, p0->getOutput());
-            } catch (Exception* e) {
+            } catch (exception& e) {
                 delete p0;
-                throw e;
+                throw;
             }
 
             delete p0;
@@ -538,9 +528,9 @@ class PerceptronTests: public TestSuiteBase<PerceptronTests> {
                 p0->setInput(0, 1);
                 p0->setInput(1, 1);
                 assertEqual(0.0f, p0->getOutput());
-            } catch (Exception* e) {
+            } catch (exception& e) {
                 delete p0;
-                throw e;
+                throw;
             }
 
             delete p0;
@@ -669,10 +659,9 @@ int main(int argc, char* argv[]) {
         tests = new CircuitTests();
         tests->runAll();
         delete tests;
-    } catch (Exception* e) {
+    } catch (exception& e) {
         cerr << "An error occurred." << endl;
-        cerr << e->getText() << endl;
-        delete e;
+        cerr << e.what() << endl;
     }
     return 0;
 }
