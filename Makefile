@@ -1,3 +1,5 @@
+# TODO: This rebuilds everything every time.
+
 CC := g++
 LD := g++ 
 CFLAG := -Wall
@@ -14,15 +16,15 @@ COMPILER_FLAGS := -I $(INCLUDE_DIR) -std=c++17 -g -Wall
 FLAGS_SDL2 := `sdl2-config --cflags --libs`
 LINKER_FLAGS = $(FLAGS_SDL2) -lSDL2_ttf -lSDL2_image
 
-all: logi-game
+MO_FILES := locale/en/LC_MESSAGES/logi-game.mo
 
-test: logi-game-tests
+all: $(BIN_DIR)/logi-game $(BIN_DIR)/tests
 
 text:
 	xgettext --keyword=_ --language=C++ --add-comments --sort-output -o locale/logi-game.pot src/main.cpp
 	msgmerge --update locale/en/logi-game.po locale/logi-game.pot
 
-logi-game: main.o Color.o FontResource.o GameState.o Rectangle.o ResourceFactory.o logi-game.mo
+$(BIN_DIR)/logi-game: $(BUILD_DIR)/main.o $(BUILD_DIR)/Color.o $(BUILD_DIR)/FontResource.o $(BUILD_DIR)/GameState.o $(BUILD_DIR)/Rectangle.o $(BUILD_DIR)/ResourceFactory.o $(MO_FILES)
 	g++ $(BUILD_DIR)/main.o \
 		$(BUILD_DIR)/Color.o \
 		$(BUILD_DIR)/FontResource.o \
@@ -31,34 +33,34 @@ logi-game: main.o Color.o FontResource.o GameState.o Rectangle.o ResourceFactory
 		$(BUILD_DIR)/ResourceFactory.o \
 		-o $(BIN_DIR)/logi-game $(CFLAGS_SDL2) $(LINKER_FLAGS)
 
-main.o:
+$(BUILD_DIR)/main.o: $(SRC_DIR)/main.cpp
 	g++ -c $(SRC_DIR)/main.cpp -o $(BUILD_DIR)/main.o $(COMPILER_FLAGS)
 
-Color.o:
+$(BUILD_DIR)/Color.o: $(SRC_DIR)/Color.cpp
 	g++ -c $(SRC_DIR)/Color.cpp -o $(BUILD_DIR)/Color.o $(COMPILER_FLAGS)
 
-FontResource.o:
+$(BUILD_DIR)/FontResource.o:$(SRC_DIR)/FontResource.cpp
 	g++ -c $(SRC_DIR)/FontResource.cpp -o $(BUILD_DIR)/FontResource.o $(COMPILER_FLAGS)
 
-GameState.o:
+$(BUILD_DIR)/GameState.o: $(SRC_DIR)/GameState.cpp
 	g++ -c $(SRC_DIR)/GameState.cpp -o $(BUILD_DIR)/GameState.o $(COMPILER_FLAGS)
 
-Rectangle.o:
+$(BUILD_DIR)/Rectangle.o: $(SRC_DIR)/Rectangle.cpp
 	g++ -c $(SRC_DIR)/Rectangle.cpp -o $(BUILD_DIR)/Rectangle.o $(COMPILER_FLAGS)
 
-ResourceFactory.o:
+$(BUILD_DIR)/ResourceFactory.o: $(SRC_DIR)/ResourceFactory.cpp
 	g++ -c $(SRC_DIR)/ResourceFactory.cpp -o $(BUILD_DIR)/ResourceFactory.o $(COMPILER_FLAGS)
 
-logi-game.mo:
+locale/en/LC_MESSAGES/logi-game.mo: locale/en/logi-game.po
 	msgfmt --output-file=locale/en/LC_MESSAGES/logi-game.mo locale/en/logi-game.po
 
-logi-game-tests: test/src/main.o
-	g++ test/build/main.o \
-		-o test/bin/logi-game-tests $(CFLAGS_SDL2) $(LINKER_FLAGS)
-	test/bin/logi-game-tests
+$(BIN_DIR)/tests: $(BUILD_DIR)/tests.o
+	g++ $(BUILD_DIR)/tests.o \
+		-o $(BIN_DIR)/tests $(CFLAGS_SDL2) $(LINKER_FLAGS)
+	$(BIN_DIR)/tests
 
-test/src/main.o:
-	g++ -c test/src/main.cpp -o test/build/main.o $(COMPILER_FLAGS)
+$(BUILD_DIR)/tests.o: $(SRC_DIR)/testing/tests.cpp
+	g++ -c $(SRC_DIR)/testing/tests.cpp -o $(BUILD_DIR)/tests.o $(COMPILER_FLAGS)
 
 clean:
 	rm -f $(BIN_DIR)/logi-game $(BUILD_DIR)/*.o test/bin/logi-game-tests test/build/*.o

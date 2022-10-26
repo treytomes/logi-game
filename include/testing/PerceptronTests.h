@@ -6,7 +6,7 @@ using namespace std;
 
 #include "Perceptron.h"
 #include "PerceptronFactory.h"
-#include "TestSuiteBase.h"
+#include "testing/TestSuiteBase.h"
 
 class PerceptronTests: public TestSuiteBase<PerceptronTests> {
     private:

@@ -5,7 +5,7 @@
 #include "ConstantOutputSource.h"
 #include "Perceptron.h"
 #include "PerceptronFactory.h"
-#include "TestSuiteBase.h"
+#include "testing/TestSuiteBase.h"
 
 class CircuitTests: public TestSuiteBase<CircuitTests> {
     private:

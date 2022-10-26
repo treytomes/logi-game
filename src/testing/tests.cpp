@@ -4,10 +4,10 @@ using namespace std;
 
 // TODO: Cost is related to computational complexity.
 
-#include "TestSuite.h"
+#include "testing/TestSuite.h"
 
-#include "CircuitTests.h"
-#include "PerceptronTests.h"
+#include "testing/CircuitTests.h"
+#include "testing/PerceptronTests.h"
 
 int main(int argc, char* argv[]) {
     try {
