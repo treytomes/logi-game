@@ -1,5 +1,3 @@
-# TODO: This rebuilds everything every time.
-
 CC := g++
 LD := g++ 
 CFLAG := -Wall
@@ -63,5 +61,4 @@ $(BUILD_DIR)/tests.o: $(SRC_DIR)/testing/tests.cpp
 	g++ -c $(SRC_DIR)/testing/tests.cpp -o $(BUILD_DIR)/tests.o $(COMPILER_FLAGS)
 
 clean:
-	rm -f $(BIN_DIR)/logi-game $(BUILD_DIR)/*.o test/bin/logi-game-tests test/build/*.o
-
+	rm -f $(BIN_DIR)/* $(BUILD_DIR)/*
