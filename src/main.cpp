@@ -2,10 +2,6 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
-#include <libintl.h>
-#include <locale.h>
-#define _(STRING) gettext(STRING)
-
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -16,101 +12,19 @@ using namespace std;
 #include "json.hpp"
 using json = nlohmann::json;
 
+#include "Border.h"
 #include "Color.h"
 #include "FontResource.h"
 #include "GameState.h"
+#include "i18n.h"
 #include "Rectangle.h"
+#include "renderHelpers.h"
 #include "Resource.h"
 #include "ResourceFactory.h"
 
 #define PATH_SETTINGS "settings.json"
 
-inline void setRenderColor(SDL_Renderer* renderer, Color color) {
-	if (SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a) != 0) {
-		cerr << _("Unable to set render color: ") << SDL_GetError() << endl;
-	}
-}
-
-void renderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, int x, int y, Color color = Color(255, 255, 255)) {
-	SDL_Surface* textSurface = TTF_RenderText_Solid(font, text, color);
-	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-
-	Rectangle textRect(x, y, textSurface->w, textSurface->h);
-	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
-
-	SDL_DestroyTexture(textTexture);
-	SDL_FreeSurface(textSurface);
-}
-
-inline void setTextureColor(SDL_Texture* texture, Color color) {
-	if (SDL_SetTextureColorMod(texture, color.r, color.g, color.b) != 0) {
-		cerr << _("Unable to set texture color: ") << SDL_GetError() << endl;
-	}
-}
-
 // TODO: Need a better logging system.
-#include "ResourceFactory.h"
-
-class Border {
-	private:
-		Color _borderColor;
-		Color _backgroundColor;
-		Rectangle* _rect;
-
-	public:
-		Border(Rectangle rect);
-		Border(int x, int y, int width, int height);
-		~Border();
-		void render(SDL_Renderer* renderer);
-
-		inline Rectangle* getRect() { return _rect; }
-		inline Color getBorderColor() { return _borderColor; }
-		inline void setBorderColor(Color c) { _borderColor = c; }
-		void setBorderColor(int r, int g, int b, int a = 255);
-		inline Color getBackgroundColor() { return _backgroundColor; }
-		inline void setBackgroundColor(Color c) { _backgroundColor = c; }
-		void setBackgroundColor(int r, int g, int b, int a = 255);
-};
-
-Border::Border(Rectangle rect)
-	: _borderColor(255, 255, 255), _backgroundColor(255, 255, 255), _rect(new Rectangle(rect)) {
-}
-
-Border::Border(int x, int y, int width, int height)
-	: Border(Rectangle(x, y, width, height)) {
-}
-
-Border::~Border() {
-	if (_rect != nullptr) {
-		delete _rect;
-		_rect = nullptr;
-	}
-}
-
-void Border::render(SDL_Renderer* renderer) {
-	setRenderColor(renderer, _backgroundColor);
-	SDL_RenderFillRect(renderer, _rect);
-
-	setRenderColor(renderer, _borderColor);
-	SDL_RenderDrawLine(renderer, _rect->getLeft(), _rect->getTop(), _rect->getLeft(), _rect->getBottom());
-	SDL_RenderDrawLine(renderer, _rect->getRight(), _rect->getTop(), _rect->getRight(), _rect->getBottom());
-	SDL_RenderDrawLine(renderer, _rect->getLeft(), _rect->getTop(), _rect->getRight(), _rect->getTop());
-	SDL_RenderDrawLine(renderer, _rect->getLeft(), _rect->getBottom(), _rect->getRight(), _rect->getBottom());
-}
-
-void Border::setBorderColor(int r, int g, int b, int a) {
-	_borderColor.r = r;
-	_borderColor.g = g;
-	_borderColor.b = b;
-	_borderColor.a = a;
-}
-
-void Border::setBackgroundColor(int r, int g, int b, int a) {
-	_backgroundColor.r = r;
-	_backgroundColor.g = g;
-	_backgroundColor.b = b;
-	_backgroundColor.a = a;
-}
 
 class SampleGameState: public GameState {
 	private:
@@ -191,7 +105,6 @@ void SampleGameState::renderFrame(SDL_Renderer* renderer) {
 	_border->render(renderer);
 
 	renderText(renderer, ResourceFactory::get()->get<FontResource>("fontMain")->getValue(), _("Hello, world!"), 320, 240, Color(255, 200, 0));
-	//renderText(renderer, _font, _("Hello, world!"), 320, 240, Color(255, 200, 0));
 
 	Rectangle imageRect(100, 100, 16, 16);
 	setTextureColor(_texture, Color(255, 0, 255));

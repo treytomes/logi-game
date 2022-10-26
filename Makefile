@@ -22,17 +22,22 @@ text:
 	xgettext --keyword=_ --language=C++ --add-comments --sort-output -o locale/logi-game.pot src/main.cpp
 	msgmerge --update locale/en/logi-game.po locale/logi-game.pot
 
-$(BIN_DIR)/logi-game: $(BUILD_DIR)/main.o $(BUILD_DIR)/Color.o $(BUILD_DIR)/FontResource.o $(BUILD_DIR)/GameState.o $(BUILD_DIR)/Rectangle.o $(BUILD_DIR)/ResourceFactory.o $(MO_FILES)
+$(BIN_DIR)/logi-game: $(BUILD_DIR)/main.o $(BUILD_DIR)/Border.o $(BUILD_DIR)/Color.o $(BUILD_DIR)/FontResource.o $(BUILD_DIR)/GameState.o $(BUILD_DIR)/Rectangle.o $(BUILD_DIR)/renderHelpers.o $(BUILD_DIR)/ResourceFactory.o $(MO_FILES)
 	g++ $(BUILD_DIR)/main.o \
+		$(BUILD_DIR)/Border.o \
 		$(BUILD_DIR)/Color.o \
 		$(BUILD_DIR)/FontResource.o \
 		$(BUILD_DIR)/GameState.o \
 		$(BUILD_DIR)/Rectangle.o \
+		$(BUILD_DIR)/renderHelpers.o \
 		$(BUILD_DIR)/ResourceFactory.o \
 		-o $(BIN_DIR)/logi-game $(CFLAGS_SDL2) $(LINKER_FLAGS)
 
 $(BUILD_DIR)/main.o: $(SRC_DIR)/main.cpp
 	g++ -c $(SRC_DIR)/main.cpp -o $(BUILD_DIR)/main.o $(COMPILER_FLAGS)
+
+$(BUILD_DIR)/Border.o: $(SRC_DIR)/Border.cpp
+	g++ -c $(SRC_DIR)/Border.cpp -o $(BUILD_DIR)/Border.o $(COMPILER_FLAGS)
 
 $(BUILD_DIR)/Color.o: $(SRC_DIR)/Color.cpp
 	g++ -c $(SRC_DIR)/Color.cpp -o $(BUILD_DIR)/Color.o $(COMPILER_FLAGS)
@@ -45,6 +50,9 @@ $(BUILD_DIR)/GameState.o: $(SRC_DIR)/GameState.cpp
 
 $(BUILD_DIR)/Rectangle.o: $(SRC_DIR)/Rectangle.cpp
 	g++ -c $(SRC_DIR)/Rectangle.cpp -o $(BUILD_DIR)/Rectangle.o $(COMPILER_FLAGS)
+
+$(BUILD_DIR)/renderHelpers.o: $(SRC_DIR)/renderHelpers.cpp
+	g++ -c $(SRC_DIR)/renderHelpers.cpp -o $(BUILD_DIR)/renderHelpers.o $(COMPILER_FLAGS)
 
 $(BUILD_DIR)/ResourceFactory.o: $(SRC_DIR)/ResourceFactory.cpp
 	g++ -c $(SRC_DIR)/ResourceFactory.cpp -o $(BUILD_DIR)/ResourceFactory.o $(COMPILER_FLAGS)
