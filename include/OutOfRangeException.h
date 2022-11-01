@@ -26,6 +26,12 @@ class OutOfRangeException: public range_error {
             ss << getValue() << " must be between " << getMinimum() << " and " << getMaximum() << ".";
             return ss.str().c_str();
         }
+
+        inline void assert() {
+            if ((getValue() < getMinimum()) || (getValue() >= getMaximum())) {
+                throw *this;
+            }
+        }
 };
 
 #endif

@@ -24,6 +24,12 @@ class AssertException: public exception {
             ss << "Expected " << getExpectedValue() << ", found " << getActualValue() << ".";
             return ss.str().c_str();
         }
+
+        void assert() {
+            if (getExpectedValue() != getActualValue()) {
+                throw *this;
+            }
+        }
 };
 
 #endif

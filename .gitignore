@@ -1,5 +1,9 @@
 *.zip
 bin/**
+
 build/**
+!buid/testing
+build/testing/*
+
 test/bin/**
 test/build/**
