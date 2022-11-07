@@ -1,7 +1,11 @@
 #ifndef __RECTANGLE_H__
 #define __RECTANGLE_H__
 
-#include <SDL2/SDL.h>
+#ifdef _WIN32
+	#include <SDL.h>
+#else
+	#include <SDL2/SDL.h>
+#endif
 
 class Rectangle: public SDL_Rect {
 	public:

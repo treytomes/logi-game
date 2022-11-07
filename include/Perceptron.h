@@ -85,7 +85,7 @@ class Perceptron: public IHasOutput {
                 output += getWeight(n) * getInput(n);
             }
             output += getBias();
-            return (output > 0) ? 1 : 0;
+            return (output > 0.0f) ? 1.0f : 0.0f;
         }
 };
 

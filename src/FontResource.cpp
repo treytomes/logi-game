@@ -1,10 +1,12 @@
-#include <SDL2/SDL_ttf.h>
+#ifdef _WIN32
+	#include <SDL_ttf.h>
+#else
+	#include <SDL2/SDL_ttf.h>
+#endif
 #include <fstream>
 #include <iostream>
 
-#include <libintl.h>
-#include <locale.h>
-#define _(STRING) gettext(STRING)
+#include "i18n.h"
 
 #include "FontResource.h"
 

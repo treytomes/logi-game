@@ -27,7 +27,7 @@ void PerceptronTests::testPerceptronCanBeNOT() {
 
         p0->setInput(0, 1);
         assertEqual(0.0f, p0->getOutput());
-    } catch (exception& e) {
+    } catch (exception&) {
         delete p0;
         throw;
     }
@@ -53,7 +53,7 @@ void PerceptronTests::testPerceptronCanBeAND() {
         p0->setInput(0, 1);
         p0->setInput(1, 1);
         assertEqual(1.0f, p0->getOutput());
-    } catch (exception& e) {
+    } catch (exception&) {
         delete p0;
         throw;
     }
@@ -79,7 +79,7 @@ void PerceptronTests::testPerceptronCanBeOR() {
         p0->setInput(0, 1);
         p0->setInput(1, 1);
         assertEqual(1.0f, p0->getOutput());
-    } catch (exception& e) {
+    } catch (exception&) {
         delete p0;
         throw;
     }
@@ -105,7 +105,7 @@ void PerceptronTests::testPerceptronCanBeNOR() {
         p0->setInput(0, 1);
         p0->setInput(1, 1);
         assertEqual(0.0f, p0->getOutput());
-    } catch (exception& e) {
+    } catch (exception&) {
         delete p0;
         throw;
     }
@@ -131,7 +131,7 @@ void PerceptronTests::testPerceptronCanBeNAND() {
         p0->setInput(0, 1);
         p0->setInput(1, 1);
         assertEqual(0.0f, p0->getOutput());
-    } catch (exception& e) {
+    } catch (exception&) {
         delete p0;
         throw;
     }

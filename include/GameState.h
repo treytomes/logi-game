@@ -1,7 +1,11 @@
 #ifndef __GAMESTATE_H__
 #define __GAMESTATE_H__
 
-#include <SDL2/SDL.h>
+#ifdef _WIN32
+	#include <SDL.h>
+#else
+	#include <SDL2/SDL.h>
+#endif
 
 class GameState {
 	private:

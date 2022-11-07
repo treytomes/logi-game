@@ -1,6 +1,14 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
+#ifdef _WIN32
+	#define SDL_MAIN_HANDLED
+
+	#include <SDL.h>
+	#include <SDL_ttf.h>
+	#include <SDL_image.h>
+#else
+	#include <SDL2/SDL.h>
+	#include <SDL2/SDL_ttf.h>
+	#include <SDL2/SDL_image.h>
+#endif
 
 #include <fstream>
 #include <iostream>
@@ -159,10 +167,13 @@ json getSettings() {
 bool init() {
 	json settings = getSettings();
 
+#ifdef _WIN32
+#else
 	/* Setting the i18n environment */
 	setlocale(LC_ALL, "");
 	bindtextdomain("logi-game", "./locale");
 	textdomain("logi-game");
+#endif
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		cerr << _("Unable to initialize SDL: ") << SDL_GetError() << endl;
@@ -171,7 +182,7 @@ bool init() {
 
 	int width = settings["graphics"]["width"].get<int>();
 	int height = settings["graphics"]["height"].get<int>();
-	if (!SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer) == 0) {
+	if (SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer) != 0) {
 		cerr << _("Unable to create renderer: ") << SDL_GetError() << endl;
 		return false;
 	}

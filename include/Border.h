@@ -3,7 +3,11 @@
 
 #include "Color.h"
 #include "Rectangle.h"
-#include <SDL2/SDL.h>
+#ifdef _WIN32
+	#include <SDL.h>
+#else
+	#include <SDL2/SDL.h>
+#endif
 
 class Border {
 	private:
