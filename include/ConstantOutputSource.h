@@ -20,6 +20,8 @@ class ConstantOutputSource: public INetworkable {
             OutOfRangeException(outputNumber, 0, 1).assert();
             return _output;
         }
+
+        inline void step() {}
 };
 
 #endif

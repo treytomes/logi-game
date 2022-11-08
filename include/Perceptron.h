@@ -28,7 +28,7 @@ class Perceptron: public INetworkable {
                 delete[] _inputs;
                 _inputs = nullptr;
             }
-        }    
+        }
 
         inline void clear() {
             _bias = 0;
@@ -87,6 +87,9 @@ class Perceptron: public INetworkable {
             output += getBias();
             return (output > 0.0f) ? 1.0f : 0.0f;
         }
+
+        // Nothing actually to do, but it needs to be here to exist in a network.
+        inline void step() {}
 };
 
 #endif

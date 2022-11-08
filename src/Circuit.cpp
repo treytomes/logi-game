@@ -54,4 +54,7 @@ void Circuit::step() {
     for (auto it = _wires.begin(); it != _wires.end(); it++) {
         (*it)->step();
     }
+    for (auto it = _components.begin(); it != _components.end(); it++) {
+        (*it)->step();
+    }
 }

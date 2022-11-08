@@ -18,6 +18,7 @@ class CircuitTests: public TestSuiteBase<CircuitTests> {
         void runAll();
         void testCircuitXNOR();
         void testCircuitXOR();
+        void testSRLatch();
 };
 
 #endif

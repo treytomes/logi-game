@@ -14,6 +14,7 @@ CircuitTests::~CircuitTests() {
 void CircuitTests::runAll() {
     runTest("Circuit ==> XNOR", &CircuitTests::testCircuitXNOR);
     runTest("Circuit ==> XOR", &CircuitTests::testCircuitXOR);
+    runTest("Circuit ==> SR Latch", &CircuitTests::testSRLatch);
 }
 
 void CircuitTests::testCircuitXNOR() {
@@ -68,6 +69,74 @@ void CircuitTests::testCircuitXOR() {
     circuit->setInput(1, 1);
     circuit->step();
     assertEqual(0.0f, circuit->getOutput(0));
+
+    delete circuit;
+}
+
+void CircuitTests::testSRLatch() {
+    // The recursion in the circuit causes it to require 2 steps for the state to settle.
+
+    // RESET is input 0.
+    // SET is input 1.
+    // Q is output 0.
+    // Q! is output 1.
+
+    Circuit* circuit = new Circuit();
+
+    INetworkable* set = circuit->addInput();
+    INetworkable* reset = circuit->addInput();
+
+    INetworkable* nor0 = circuit->addComponent(_factory->createNOR(), true);
+    INetworkable* nor1 = circuit->addComponent(_factory->createNOR(), true);
+
+    circuit->connectFrom(reset)->connectTo(nor0, 0);
+    circuit->connectFrom(nor1)->connectTo(nor0, 1);
+
+    circuit->connectFrom(nor0)->connectTo(nor1, 0);
+    circuit->connectFrom(set)->connectTo(nor1, 1);
+
+    float q = 0;
+    float qNot = 0;
+
+    // Can we set the output?
+    circuit->setInput(0, 0);
+    circuit->setInput(1, 1);
+    circuit->step();
+    circuit->step();
+    q = circuit->getOutput(1);
+    qNot = circuit->getOutput(0);
+    assertEqual(1.0f, q);
+    assertEqual(0.0f, qNot);
+
+    // Is the set state being saved?
+    circuit->setInput(0, 0);
+    circuit->setInput(1, 0);
+    circuit->step();
+    circuit->step();
+    q = circuit->getOutput(1);
+    qNot = circuit->getOutput(0);
+    assertEqual(1.0f, q);
+    assertEqual(0.0f, qNot);
+
+    // Can we reset the state?
+    circuit->setInput(0, 1);
+    circuit->setInput(1, 0);
+    circuit->step();
+    circuit->step();
+    q = circuit->getOutput(1);
+    qNot = circuit->getOutput(0);
+    assertEqual(0.0f, q);
+    assertEqual(1.0f, qNot);
+
+    // Is the reset state being saved?
+    circuit->setInput(0, 0);
+    circuit->setInput(1, 0);
+    circuit->step();
+    circuit->step();
+    q = circuit->getOutput(1);
+    qNot = circuit->getOutput(0);
+    assertEqual(0.0f, q);
+    assertEqual(1.0f, qNot);
 
     delete circuit;
 }
