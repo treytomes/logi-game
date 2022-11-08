@@ -4,17 +4,17 @@
 #include <vector>
 using namespace std;
 
-#include "IHasOutput.h"
+#include "INetworkable.h"
 #include "Perceptron.h"
 #include "PerceptronWireConnection.h"
 
 class PerceptronWire {
     private:
-        IHasOutput* _source;
+        INetworkable* _source;
         vector<PerceptronWireConnection*> _targets;
 
     public:
-        PerceptronWire(IHasOutput* source)
+        PerceptronWire(INetworkable* source)
             : _source(source) {
             if (source == nullptr) {
                 throw ArgumentNullException("source");
@@ -28,7 +28,7 @@ class PerceptronWire {
             _targets.clear();
         }
 
-        inline IHasOutput* getSource() { return _source; }
+        inline INetworkable* getSource() { return _source; }
 
         inline bool isConnected(Perceptron* target) {
             for (auto iter = _targets.begin(); iter != _targets.end(); iter++) {

@@ -26,6 +26,16 @@
     <ClCompile Include="src\testing\tests.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\ArgumentNullException.h" />
+    <ClInclude Include="include\Circuit.h" />
+    <ClInclude Include="include\CircuitFactory.h" />
+    <ClInclude Include="include\ConstantOutputSource.h" />
+    <ClInclude Include="include\INetworkable.h" />
+    <ClInclude Include="include\OutOfRangeException.h" />
+    <ClInclude Include="include\Perceptron.h" />
+    <ClInclude Include="include\PerceptronFactory.h" />
+    <ClInclude Include="include\PerceptronWire.h" />
+    <ClInclude Include="include\PerceptronWireConnection.h" />
     <ClInclude Include="include\testing\AssertException.h" />
     <ClInclude Include="include\testing\CircuitTests.h" />
     <ClInclude Include="include\testing\PerceptronTests.h" />

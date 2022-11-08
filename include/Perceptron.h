@@ -1,11 +1,11 @@
 #ifndef __PERCEPTRON_H__
 #define __PERCEPTRON_H__
 
-#include "IHasOutput.h"
+#include "INetworkable.h"
 #include "OutOfRangeException.h"
 
 
-class Perceptron: public IHasOutput {
+class Perceptron: public INetworkable {
     private:
         int _numInputs;
         float _bias;

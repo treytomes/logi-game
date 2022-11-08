@@ -42,9 +42,6 @@
     <ClInclude Include="include\i18n.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\IHasOutput.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -76,6 +73,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\ResourceFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\INetworkable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
