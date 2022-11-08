@@ -12,6 +12,16 @@ class ComponentFactory {
         INetworkable* createNAND();
         INetworkable* createXNOR();
         INetworkable* createXOR();
+
+        /**
+         * The recursion in the circuit causes it to require 2 steps for the state to settle.
+         *
+         * RESET is input 0.
+         * SET is input 1.
+         * Q is output 0.
+         * Q! is output 1.
+         */
+        INetworkable* createSRLatch();
 };
 
 #endif

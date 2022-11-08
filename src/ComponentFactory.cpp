@@ -85,3 +85,21 @@ INetworkable* ComponentFactory::createXOR() {
 
     return circuit;
 }
+
+INetworkable* ComponentFactory::createSRLatch() {
+    Circuit* circuit = new Circuit();
+
+    INetworkable* set = circuit->addInput();
+    INetworkable* reset = circuit->addInput();
+
+    INetworkable* nor0 = circuit->addComponent(createNOR(), true);
+    INetworkable* nor1 = circuit->addComponent(createNOR(), true);
+
+    circuit->connectFrom(reset)->connectTo(nor0, 0);
+    circuit->connectFrom(nor1)->connectTo(nor0, 1);
+
+    circuit->connectFrom(nor0)->connectTo(nor1, 0);
+    circuit->connectFrom(set)->connectTo(nor1, 1);
+
+    return circuit;
+}
