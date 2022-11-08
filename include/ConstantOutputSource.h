@@ -1,9 +1,9 @@
 #ifndef __CONSTANTOUTPUTSOURCE_H__
 #define __CONSTANTOUTPUTSOURCE_H__
 
-#include "INetworkable.h"
+#include "IHasOutput.h"
 
-class ConstantOutputSource: public INetworkable {
+class ConstantOutputSource: public IHasOutput {
     private:
         float _output;
 

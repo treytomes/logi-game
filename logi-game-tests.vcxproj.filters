@@ -59,7 +59,7 @@
     <ClInclude Include="include\ConstantOutputSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\INetworkable.h">
+    <ClInclude Include="include\IHasOutput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\OutOfRangeException.h">

@@ -44,7 +44,7 @@ float Circuit::getOutput(int outputNumber) {
     return _outputs[outputNumber]->getOutput();
 }
 
-PerceptronWire* Circuit::connectFrom(INetworkable* source) {
+PerceptronWire* Circuit::connectFrom(IHasOutput* source) {
     PerceptronWire* wire = new PerceptronWire(source);
     _wires.push_back(wire);
     return wire;

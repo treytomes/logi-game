@@ -75,7 +75,7 @@
     <ClInclude Include="include\ResourceFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\INetworkable.h">
+    <ClInclude Include="include\IHasOutput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,9 +1,9 @@
 #ifndef __IHASOUTPUT_H__
 #define __IHASOUTPUT_H__
 
-class INetworkable {
+class IHasOutput {
     public:
-        virtual ~INetworkable() {}
+        virtual ~IHasOutput() {}
         virtual float getOutput() = 0;
 };
 

@@ -23,7 +23,7 @@ class Circuit {
         Perceptron* addPerceptron(Perceptron* perceptron, bool isOutput = false);
         void setInput(int inputNumber, float value);
         float getOutput(int outputNumber);
-        PerceptronWire* connectFrom(INetworkable* source);
+        PerceptronWire* connectFrom(IHasOutput* source);
         void step();
 };
 
