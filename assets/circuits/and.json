@@ -1,0 +1,6 @@
+{
+	"name": "and",
+	"type": "perceptron",
+	"bias": -1,
+	"weights": [ 1, 1 ]
+}

@@ -1,0 +1,6 @@
+{
+	"name": "nand",
+	"type": "perceptron",
+	"bias": 2,
+	"weights": [ -1, -1 ]
+}
