@@ -1,10 +1,15 @@
 #ifndef __COMPONENTFACTORY_H__
 #define __COMPONENTFACTORY_H__
 
+#include <string>
+using namespace std;
+
 #include "INetworkable.h"
 
 class ComponentFactory {
     public:
+        INetworkable* loadFile(string path);
+
         INetworkable* createNOT();
         INetworkable* createAND();
         INetworkable* createOR();

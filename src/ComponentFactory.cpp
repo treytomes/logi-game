@@ -3,43 +3,54 @@
 #include "Circuit.h"
 #include "Perceptron.h"
 
+#define JSON_USE_IMPLICIT_CONVERSIONS 0
+#include "json.hpp"
+using json = nlohmann::json;
+
+#include <fstream>
+#include <vector>
+
+INetworkable* ComponentFactory::loadFile(string path) {
+    ifstream f(path);
+    if (!f.good()) {
+        throw exception("Unable to read the file.");
+    }
+    json contents = json::parse(f);
+    string name = contents["name"].get<string>();
+    string type = contents["type"].get<string>();
+    float bias = contents["bias"].get<float>();
+    vector<float> weights = contents["weights"].get<vector<float>>();
+
+    if (type == "perceptron") {
+        Perceptron* p0 = new Perceptron(weights.size());
+        p0->setBias(bias);
+        for (int n = 0; n < weights.size(); n++) {
+            p0->setWeight(n, weights[n]);
+        }
+        return p0;
+    } else {
+        throw exception("Circuit type not implemented.");
+    }
+}
+
 INetworkable* ComponentFactory::createNOT() {
-    Perceptron* p0 = new Perceptron(1);
-    p0->setBias(1);
-    p0->setWeight(0, -1);
-    return p0;
+    return loadFile("./assets/circuits/not.json");
 }
 
 INetworkable* ComponentFactory::createAND() {
-    Perceptron* p0 = new Perceptron(2);
-    p0->setBias(-1);
-    p0->setWeight(0, 1);
-    p0->setWeight(1, 1);
-    return p0;
+    return loadFile("./assets/circuits/and.json");
 }
 
 INetworkable* ComponentFactory::createOR() {
-    Perceptron* p0 = new Perceptron(2);
-    p0->setBias(-1);
-    p0->setWeight(0, 2);
-    p0->setWeight(1, 2);
-    return p0;
+    return loadFile("./assets/circuits/or.json");
 }
 
 INetworkable* ComponentFactory::createNOR() {
-    Perceptron* p0 = new Perceptron(2);
-    p0->setBias(1);
-    p0->setWeight(0, -1);
-    p0->setWeight(1, -1);
-    return p0;
+    return loadFile("./assets/circuits/nor.json");
 }
 
 INetworkable* ComponentFactory::createNAND() {
-    Perceptron* p0 = new Perceptron(2);
-    p0->setBias(2);
-    p0->setWeight(0, -1);
-    p0->setWeight(1, -1);
-    return p0;
+    return loadFile("./assets/circuits/nand.json");
 }
 
 INetworkable* ComponentFactory::createXNOR() {
