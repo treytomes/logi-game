@@ -4,7 +4,7 @@
 class IHasOutput {
     public:
         virtual ~IHasOutput() {}
-        virtual float getOutput() = 0;
+        virtual float getOutput(int outputNumber = 0) = 0;
 };
 
 #endif

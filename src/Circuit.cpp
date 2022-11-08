@@ -9,10 +9,10 @@ Circuit::~Circuit() {
     }
     _inputs.clear();
 
-    for (auto it = _perceptrons.begin(); it != _perceptrons.end(); it++) {
+    for (auto it = _components.begin(); it != _components.end(); it++) {
         delete *it;
     }
-    _perceptrons.clear();
+    _components.clear();
 
     for (auto it = _wires.begin(); it != _wires.end(); it++) {
         delete *it;
@@ -26,17 +26,17 @@ ConstantOutputSource* Circuit::addInput(float value) {
     return input;
 }
 
-Perceptron* Circuit::addPerceptron(Perceptron* perceptron, bool isOutput) {
-    _perceptrons.push_back(perceptron);
+INetworkable* Circuit::addComponent(INetworkable* component, bool isOutput) {
+    _components.push_back(component);
     if (isOutput) {
-        _outputs.push_back(perceptron);
+        _outputs.push_back(component);
     }
-    return perceptron;
+    return component;
 }
 
 void Circuit::setInput(int inputNumber, float value) {
     OutOfRangeException(inputNumber, 0, (int)_inputs.size()).assert();
-    _inputs[inputNumber]->setOutput(value);
+    _inputs[inputNumber]->setInput(0, value);
 }
 
 float Circuit::getOutput(int outputNumber) {
@@ -44,8 +44,8 @@ float Circuit::getOutput(int outputNumber) {
     return _outputs[outputNumber]->getOutput();
 }
 
-PerceptronWire* Circuit::connectFrom(IHasOutput* source) {
-    PerceptronWire* wire = new PerceptronWire(source);
+Wire* Circuit::connectFrom(IHasOutput* source) {
+    Wire* wire = new Wire(source);
     _wires.push_back(wire);
     return wire;
 }

@@ -1,11 +1,10 @@
 #ifndef __PERCEPTRON_H__
 #define __PERCEPTRON_H__
 
-#include "IHasOutput.h"
+#include "INetworkable.h"
 #include "OutOfRangeException.h"
 
-
-class Perceptron: public IHasOutput {
+class Perceptron: public INetworkable {
     private:
         int _numInputs;
         float _bias;
@@ -65,11 +64,11 @@ class Perceptron: public IHasOutput {
             return _weights[n];
         }
 
-        inline void setInput(int n, float value) {
-            if ((n < 0) || (n >= getNumInputs())) {
-                throw OutOfRangeException(n, 0, getNumInputs());
+        inline void setInput(int inputNumber, float value) {
+            if ((inputNumber < 0) || (inputNumber >= getNumInputs())) {
+                throw OutOfRangeException(inputNumber, 0, getNumInputs());
             }
-            _inputs[n] = value;
+            _inputs[inputNumber] = value;
         }
 
         inline float getInput(int n) {
@@ -79,7 +78,8 @@ class Perceptron: public IHasOutput {
             return _inputs[n];
         }
 
-        inline float getOutput() {
+        inline float getOutput(int outputNumber = 0) {
+            OutOfRangeException(outputNumber, 0, 1).assert();
             float output = 0;
             for (int n = 0; n < getNumInputs(); n++) {
                 output += getWeight(n) * getInput(n);

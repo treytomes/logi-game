@@ -4,13 +4,13 @@
 #include <exception>
 using namespace std;
 
+#include "ComponentFactory.h"
 #include "Perceptron.h"
-#include "PerceptronFactory.h"
 #include "testing/TestSuiteBase.h"
 
 class PerceptronTests: public TestSuiteBase<PerceptronTests> {
     private:
-        PerceptronFactory* _factory;
+        ComponentFactory* _factory;
 
     public:
         PerceptronTests();

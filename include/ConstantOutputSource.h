@@ -1,16 +1,25 @@
 #ifndef __CONSTANTOUTPUTSOURCE_H__
 #define __CONSTANTOUTPUTSOURCE_H__
 
-#include "IHasOutput.h"
+#include "INetworkable.h"
+#include "OutOfRangeException.h"
 
-class ConstantOutputSource: public IHasOutput {
+class ConstantOutputSource: public INetworkable {
     private:
         float _output;
 
     public:
         ConstantOutputSource(float output = 0) : _output(output) {}
-        inline float getOutput() { return _output; }
-        inline void setOutput(float output) { _output = output; }
+
+        void setInput(int inputNumber, float value) {
+            OutOfRangeException(inputNumber, 0, 1).assert();
+            _output = value;
+        }
+
+        inline float getOutput(int outputNumber = 0) {
+            OutOfRangeException(outputNumber, 0, 1).assert();
+            return _output;
+        }
 };
 
 #endif

@@ -2,22 +2,23 @@
 #define __PERCEPTRONWIRECONNECTION_H__
 
 #include "ArgumentNullException.h"
+#include "IHasInput.h"
 #include "Perceptron.h"
 
-class PerceptronWireConnection {
+class WireConnection {
     private:
-        Perceptron* _target;
+        IHasInput* _target;
         int _inputNumber;
 
     public:
-        PerceptronWireConnection(Perceptron* target, int inputNumber)
+        WireConnection(IHasInput* target, int inputNumber)
             : _target(target), _inputNumber(inputNumber) {
             if (target == nullptr) {
                 throw ArgumentNullException("target");
             }
         }
 
-        inline Perceptron* getTarget() { return _target; }
+        inline IHasInput* getTarget() { return _target; }
         inline int getInputNumber() { return _inputNumber; }
 };
 

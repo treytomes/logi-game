@@ -6,22 +6,22 @@ using namespace std;
 
 #include "IHasOutput.h"
 #include "Perceptron.h"
-#include "PerceptronWireConnection.h"
+#include "WireConnection.h"
 
-class PerceptronWire {
+class Wire {
     private:
         IHasOutput* _source;
-        vector<PerceptronWireConnection*> _targets;
+        vector<WireConnection*> _targets;
 
     public:
-        PerceptronWire(IHasOutput* source)
+        Wire(IHasOutput* source)
             : _source(source) {
             if (source == nullptr) {
                 throw ArgumentNullException("source");
             }
         }
 
-        ~PerceptronWire() {
+        ~Wire() {
             for (auto iter = _targets.begin(); iter != _targets.end(); iter++) {
                 delete *iter;
             }
@@ -30,9 +30,9 @@ class PerceptronWire {
 
         inline IHasOutput* getSource() { return _source; }
 
-        inline bool isConnected(Perceptron* target) {
+        inline bool isConnected(IHasInput* target) {
             for (auto iter = _targets.begin(); iter != _targets.end(); iter++) {
-                PerceptronWireConnection* conn = *iter;
+                WireConnection* conn = *iter;
                 if (conn->getTarget() == target) {
                     return true;
                 }
@@ -40,19 +40,19 @@ class PerceptronWire {
             return false;
         }
 
-        PerceptronWire* connectTo(Perceptron* target, int inputNumber) {
+        Wire* connectTo(IHasInput* target, int inputNumber) {
             if (target == nullptr) {
                 throw ArgumentNullException("target");
             }
             if (!isConnected(target)) {
-                _targets.push_back(new PerceptronWireConnection(target, inputNumber));
+                _targets.push_back(new WireConnection(target, inputNumber));
             }
             return this;
         }
 
-        void disconnect(Perceptron* target) {
+        void disconnect(IHasInput* target) {
             for (auto iter = _targets.begin(); iter != _targets.end(); iter++) {
-                PerceptronWireConnection* conn = *iter;
+                WireConnection* conn = *iter;
                 if (conn->getTarget() == target) {
                     _targets.erase(iter);
                     break;
@@ -63,7 +63,7 @@ class PerceptronWire {
         void step() {
             float value = getSource()->getOutput();
             for (auto iter = _targets.begin(); iter != _targets.end(); iter++) {
-                PerceptronWireConnection* conn = *iter;
+                WireConnection* conn = *iter;
                 conn->getTarget()->setInput(conn->getInputNumber(), value);
             }
         }

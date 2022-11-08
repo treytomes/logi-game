@@ -1,7 +1,7 @@
 #include "testing/PerceptronTests.h"
 
 PerceptronTests::PerceptronTests() {
-    _factory = new PerceptronFactory();
+    _factory = new ComponentFactory();
 }
 
 PerceptronTests::~PerceptronTests() {
@@ -20,7 +20,7 @@ void PerceptronTests::runAll() {
 }
 
 void PerceptronTests::testPerceptronCanBeNOT() {
-    Perceptron *p0 = _factory->createNOT();
+    INetworkable* p0 = _factory->createNOT();
     try {
         p0->setInput(0, 0);
         assertEqual(1.0f, p0->getOutput());
@@ -36,7 +36,7 @@ void PerceptronTests::testPerceptronCanBeNOT() {
 }
 
 void PerceptronTests::testPerceptronCanBeAND() {
-    Perceptron *p0 = _factory->createAND();
+    INetworkable* p0 = _factory->createAND();
     try {
         p0->setInput(0, 0);
         p0->setInput(1, 0);
@@ -62,7 +62,7 @@ void PerceptronTests::testPerceptronCanBeAND() {
 }
 
 void PerceptronTests::testPerceptronCanBeOR() {
-    Perceptron *p0 = _factory->createOR();
+    INetworkable* p0 = _factory->createOR();
     try {
         p0->setInput(0, 0);
         p0->setInput(1, 0);
@@ -88,7 +88,7 @@ void PerceptronTests::testPerceptronCanBeOR() {
 }
 
 void PerceptronTests::testPerceptronCanBeNOR() {
-    Perceptron *p0 = _factory->createNOR();
+    INetworkable* p0 = _factory->createNOR();
     try {
         p0->setInput(0, 0);
         p0->setInput(1, 0);
@@ -114,7 +114,7 @@ void PerceptronTests::testPerceptronCanBeNOR() {
 }
 
 void PerceptronTests::testPerceptronCanBeNAND() {
-    Perceptron *p0 = _factory->createNAND();
+    INetworkable* p0 = _factory->createNAND();
     try {
         p0->setInput(0, 0);
         p0->setInput(1, 0);

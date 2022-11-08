@@ -2,15 +2,14 @@
 #define __CIRCUITTESTS_H__
 
 #include "Circuit.h"
-#include "CircuitFactory.h"
+#include "ComponentFactory.h"
 #include "ConstantOutputSource.h"
 #include "Perceptron.h"
-#include "PerceptronFactory.h"
 #include "testing/TestSuiteBase.h"
 
 class CircuitTests: public TestSuiteBase<CircuitTests> {
     private:
-        CircuitFactory* _factory;
+        ComponentFactory* _factory;
 
     public:
         CircuitTests();

@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Circuit.cpp" />
-    <ClCompile Include="src\CircuitFactory.cpp" />
+    <ClCompile Include="src\ComponentFactory.cpp" />
     <ClCompile Include="src\testing\CircuitTests.cpp" />
     <ClCompile Include="src\testing\PerceptronTests.cpp" />
     <ClCompile Include="src\testing\tests.cpp" />
@@ -28,14 +28,15 @@
   <ItemGroup>
     <ClInclude Include="include\ArgumentNullException.h" />
     <ClInclude Include="include\Circuit.h" />
-    <ClInclude Include="include\CircuitFactory.h" />
+    <ClInclude Include="include\ComponentFactory.h" />
     <ClInclude Include="include\ConstantOutputSource.h" />
+    <ClInclude Include="include\IHasInput.h" />
     <ClInclude Include="include\IHasOutput.h" />
+    <ClInclude Include="include\INetworkable.h" />
     <ClInclude Include="include\OutOfRangeException.h" />
     <ClInclude Include="include\Perceptron.h" />
-    <ClInclude Include="include\PerceptronFactory.h" />
-    <ClInclude Include="include\PerceptronWire.h" />
-    <ClInclude Include="include\PerceptronWireConnection.h" />
+    <ClInclude Include="include\Wire.h" />
+    <ClInclude Include="include\WireConnection.h" />
     <ClInclude Include="include\testing\AssertException.h" />
     <ClInclude Include="include\testing\CircuitTests.h" />
     <ClInclude Include="include\testing\PerceptronTests.h" />

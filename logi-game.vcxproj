@@ -22,7 +22,6 @@
     <ClInclude Include="include\ArgumentNullException.h" />
     <ClInclude Include="include\Border.h" />
     <ClInclude Include="include\Circuit.h" />
-    <ClInclude Include="include\CircuitFactory.h" />
     <ClInclude Include="include\Color.h" />
     <ClInclude Include="include\ConstantOutputSource.h" />
     <ClInclude Include="include\FontResource.h" />
@@ -32,9 +31,6 @@
     <ClInclude Include="include\json.hpp" />
     <ClInclude Include="include\OutOfRangeException.h" />
     <ClInclude Include="include\Perceptron.h" />
-    <ClInclude Include="include\PerceptronFactory.h" />
-    <ClInclude Include="include\PerceptronWire.h" />
-    <ClInclude Include="include\PerceptronWireConnection.h" />
     <ClInclude Include="include\Rectangle.h" />
     <ClInclude Include="include\renderHelpers.h" />
     <ClInclude Include="include\Resource.h" />
@@ -44,7 +40,6 @@
   <ItemGroup>
     <ClCompile Include="src\Border.cpp" />
     <ClCompile Include="src\Circuit.cpp" />
-    <ClCompile Include="src\CircuitFactory.cpp" />
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\FontResource.cpp" />
     <ClCompile Include="src\GameState.cpp" />

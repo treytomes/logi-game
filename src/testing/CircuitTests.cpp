@@ -1,8 +1,7 @@
 #include "testing/CircuitTests.h"
-#include "CircuitFactory.h"
 
 CircuitTests::CircuitTests() {
-    _factory = new CircuitFactory();
+    _factory = new ComponentFactory();
 }
 
 CircuitTests::~CircuitTests() {
@@ -18,7 +17,7 @@ void CircuitTests::runAll() {
 }
 
 void CircuitTests::testCircuitXNOR() {
-    Circuit* circuit =  _factory->createXNOR();
+    Circuit* circuit = static_cast<Circuit*>(_factory->createXNOR());
 
     // There are 2 layers, so we need 1 update for the circuit to settle.
 
@@ -46,7 +45,7 @@ void CircuitTests::testCircuitXNOR() {
 }
 
 void CircuitTests::testCircuitXOR() {
-    Circuit* circuit = _factory->createXOR();
+    Circuit* circuit = static_cast<Circuit*>(_factory->createXOR());
 
     // There are 2 layers, so we need 1 update for the circuit to settle.
 
