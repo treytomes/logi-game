@@ -53,6 +53,10 @@ INetworkable* ComponentFactory::createNAND() {
     return loadFile("./assets/circuits/nand.json");
 }
 
+INetworkable* ComponentFactory::createDiode() {
+    return loadFile("./assets/circuits/diode.json");
+}
+
 INetworkable* ComponentFactory::createXNOR() {
     Circuit* circuit = new Circuit();
 
@@ -63,14 +67,14 @@ INetworkable* ComponentFactory::createXNOR() {
     INetworkable* nor0 = circuit->addComponent(createNOR());
     INetworkable* or0 = circuit->addComponent(createOR(), true);
 
-    circuit->connectFrom(input0)
+    circuit->connectFrom(input0, 0)
         ->connectTo(and0, 0)
         ->connectTo(nor0, 0);
-    circuit->connectFrom(input1)
+    circuit->connectFrom(input1, 0)
         ->connectTo(and0, 1)
         ->connectTo(nor0, 1);
-    circuit->connectFrom(and0)->connectTo(or0, 0);
-    circuit->connectFrom(nor0)->connectTo(or0, 1);
+    circuit->connectFrom(and0, 0)->connectTo(or0, 0);
+    circuit->connectFrom(nor0, 0)->connectTo(or0, 1);
 
     return circuit;
 }
@@ -85,14 +89,23 @@ INetworkable* ComponentFactory::createXOR() {
     INetworkable* nand0 = circuit->addComponent(createNAND());
     INetworkable* and0 = circuit->addComponent(createAND(), true);
 
-    circuit->connectFrom(input0)
+    circuit->connectFrom(input0, 0)
         ->connectTo(or0, 0)
         ->connectTo(nand0, 0);
-    circuit->connectFrom(input1)
+    circuit->connectFrom(input1, 0)
         ->connectTo(or0, 1)
         ->connectTo(nand0, 1);
-    circuit->connectFrom(or0)->connectTo(and0, 0);
-    circuit->connectFrom(nand0)->connectTo(and0, 1);
+    circuit->connectFrom(or0, 0)->connectTo(and0, 0);
+    circuit->connectFrom(nand0, 0)->connectTo(and0, 1);
+
+    return circuit;
+}
+
+INetworkable* ComponentFactory::createClock() {
+    Circuit* circuit = new Circuit();
+
+    INetworkable* not0 = circuit->addComponent(createNOT(), true);
+    circuit->connectFrom(not0, 0)->connectTo(not0, 0);
 
     return circuit;
 }
@@ -106,11 +119,38 @@ INetworkable* ComponentFactory::createSRLatch() {
     INetworkable* nor0 = circuit->addComponent(createNOR(), true);
     INetworkable* nor1 = circuit->addComponent(createNOR(), true);
 
-    circuit->connectFrom(reset)->connectTo(nor0, 0);
-    circuit->connectFrom(nor1)->connectTo(nor0, 1);
+    circuit->connectFrom(reset, 0)->connectTo(nor0, 0);
+    circuit->connectFrom(nor1, 0)->connectTo(nor0, 1);
 
-    circuit->connectFrom(nor0)->connectTo(nor1, 0);
-    circuit->connectFrom(set)->connectTo(nor1, 1);
+    circuit->connectFrom(nor0, 0)->connectTo(nor1, 0);
+    circuit->connectFrom(set, 0)->connectTo(nor1, 1);
+
+    return circuit;
+}
+
+INetworkable* ComponentFactory::createSRFlipFlop() {
+    Circuit* circuit = new Circuit();
+
+    ConstantOutputSource* reset0 = circuit->addInput();
+    ConstantOutputSource* enable0 = circuit->addInput();
+    ConstantOutputSource* set0 = circuit->addInput();
+
+    INetworkable* and0 = circuit->addComponent(createAND());
+    INetworkable* and1 = circuit->addComponent(createAND());
+
+    INetworkable* srLatch0 = circuit->addComponent(createSRLatch());
+
+    INetworkable* qNot0 = circuit->addComponent(createDiode(), true);
+    INetworkable* q0 = circuit->addComponent(createDiode(), true);
+
+    circuit->connectFrom(reset0, 0)->connectTo(and0, 0);
+    circuit->connectFrom(enable0, 0)->connectTo(and0, 1);
+    circuit->connectFrom(enable0, 0)->connectTo(and1, 0);
+    circuit->connectFrom(set0, 0)->connectTo(and1, 1);
+    circuit->connectFrom(and0, 0)->connectTo(srLatch0, 0);
+    circuit->connectFrom(and1, 0)->connectTo(srLatch0, 1);
+    circuit->connectFrom(srLatch0, 0)->connectTo(qNot0, 0);
+    circuit->connectFrom(srLatch0, 1)->connectTo(q0, 0);
 
     return circuit;
 }

@@ -22,6 +22,7 @@ class PerceptronTests: public TestSuiteBase<PerceptronTests> {
         void testPerceptronCanBeOR();
         void testPerceptronCanBeNOR();
         void testPerceptronCanBeNAND();
+        void testPerceptronCanBeDiode();
 };
 
 #endif

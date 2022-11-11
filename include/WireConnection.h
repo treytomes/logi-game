@@ -7,19 +7,19 @@
 
 class WireConnection {
     private:
-        IHasInput* _target;
-        int _inputNumber;
+        INetworkable* _target;
+        int _portNumber;
 
     public:
-        WireConnection(IHasInput* target, int inputNumber)
-            : _target(target), _inputNumber(inputNumber) {
+        WireConnection(INetworkable* target, int portNumber)
+            : _target(target), _portNumber(portNumber) {
             if (target == nullptr) {
                 throw ArgumentNullException("target");
             }
         }
 
-        inline IHasInput* getTarget() { return _target; }
-        inline int getInputNumber() { return _inputNumber; }
+        inline INetworkable* getTarget() { return _target; }
+        inline int getPortNumber() { return _portNumber; }
 };
 
 #endif

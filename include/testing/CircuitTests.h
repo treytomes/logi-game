@@ -16,9 +16,12 @@ class CircuitTests: public TestSuiteBase<CircuitTests> {
         ~CircuitTests();
 
         void runAll();
+
         void testCircuitXNOR();
         void testCircuitXOR();
         void testSRLatch();
+        void testClock();
+        void testSRFlipFlop();
 };
 
 #endif

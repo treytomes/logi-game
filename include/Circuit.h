@@ -24,7 +24,7 @@ class Circuit : public INetworkable {
         INetworkable* addComponent(INetworkable* component, bool isOutput = false);
         void setInput(int inputNumber, float value);
         float getOutput(int outputNumber);
-        Wire* connectFrom(IHasOutput* source);
+        Wire* connectFrom(INetworkable* source, int outputNumber);
         void step();
 };
 

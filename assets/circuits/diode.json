@@ -1,0 +1,6 @@
+{
+	"name": "diode",
+	"type": "perceptron",
+	"bias": 0,
+	"weights": [ 1 ]
+}

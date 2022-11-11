@@ -17,6 +17,7 @@ void PerceptronTests::runAll() {
     runTest("Perceptron ==> OR", &PerceptronTests::testPerceptronCanBeOR);
     runTest("Perceptron ==> NOR", &PerceptronTests::testPerceptronCanBeNOR);
     runTest("Perceptron ==> NAND", &PerceptronTests::testPerceptronCanBeNAND);
+    runTest("Perceptron ==> Diode", &PerceptronTests::testPerceptronCanBeDiode);
 }
 
 void PerceptronTests::testPerceptronCanBeNOT() {
@@ -131,10 +132,29 @@ void PerceptronTests::testPerceptronCanBeNAND() {
         p0->setInput(0, 1);
         p0->setInput(1, 1);
         assertEqual(0.0f, p0->getOutput());
+
+        delete p0;
     } catch (exception&) {
         delete p0;
         throw;
     }
+}
 
-    delete p0;
+void PerceptronTests::testPerceptronCanBeDiode() {
+    INetworkable* p0 = _factory->createDiode();
+    try {
+        p0->setInput(0, 0);
+        float output = p0->getOutput();
+        assertEqual(0.0f, output);
+
+        p0->setInput(0, 1);
+        output = p0->getOutput();
+        assertEqual(1.0f, output);
+
+        delete p0;
+    }
+    catch (exception&) {
+        delete p0;
+        throw;
+    }
 }

@@ -44,8 +44,8 @@ float Circuit::getOutput(int outputNumber) {
     return _outputs[outputNumber]->getOutput();
 }
 
-Wire* Circuit::connectFrom(IHasOutput* source) {
-    Wire* wire = new Wire(source);
+Wire* Circuit::connectFrom(INetworkable* source, int outputNumber) {
+    Wire* wire = new Wire(source, outputNumber);
     _wires.push_back(wire);
     return wire;
 }

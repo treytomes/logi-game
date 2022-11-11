@@ -21,13 +21,7 @@
     <ClInclude Include="include\Border.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Circuit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Color.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ConstantOutputSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\FontResource.h">
@@ -43,9 +37,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\OutOfRangeException.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Perceptron.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Rectangle.h">
@@ -69,9 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Border.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Circuit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Color.cpp">

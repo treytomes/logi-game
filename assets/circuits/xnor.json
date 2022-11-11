@@ -1,0 +1,21 @@
+{
+	"name": "xnor",
+	"type": "circuit",
+
+	"numInputs": 2,
+
+	"components": [
+		{ "name": "and0", "path": "./assets/circuits/and.json" },
+		{ "name": "nor0", "path": "./assets/circuits/nor.json" },
+		{ "name": "or0", "path": "./assets/circuits/or.json", "isOutput": true }
+	],
+
+	"connections": [
+		{ "from": [ "input", 0 ], "to": [ "and0", 0 ] },
+		{ "from": [ "input", 0 ], "to": [ "nor0", 0 ] },
+		{ "from": [ "input", 1 ], "to": [ "and0", 1 ] },
+		{ "from": [ "input", 1 ], "to": [ "nor0", 1 ] },
+		{ "from": [ "component", "and0" ], "to": [ "or0", 0 ]},
+		{ "from": [ "component", "nor0" ], "to": [ "or0", 1 ]}
+	]
+}

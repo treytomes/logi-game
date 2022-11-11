@@ -21,16 +21,13 @@
   <ItemGroup>
     <ClInclude Include="include\ArgumentNullException.h" />
     <ClInclude Include="include\Border.h" />
-    <ClInclude Include="include\Circuit.h" />
     <ClInclude Include="include\Color.h" />
-    <ClInclude Include="include\ConstantOutputSource.h" />
     <ClInclude Include="include\FontResource.h" />
     <ClInclude Include="include\GameState.h" />
     <ClInclude Include="include\i18n.h" />
     <ClInclude Include="include\IHasOutput.h" />
     <ClInclude Include="include\json.hpp" />
     <ClInclude Include="include\OutOfRangeException.h" />
-    <ClInclude Include="include\Perceptron.h" />
     <ClInclude Include="include\Rectangle.h" />
     <ClInclude Include="include\renderHelpers.h" />
     <ClInclude Include="include\Resource.h" />
@@ -39,7 +36,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Border.cpp" />
-    <ClCompile Include="src\Circuit.cpp" />
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\FontResource.cpp" />
     <ClCompile Include="src\GameState.cpp" />

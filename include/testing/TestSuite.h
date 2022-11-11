@@ -7,7 +7,10 @@ class TestSuite {
     protected:
         template<typename TValue>
         inline void assertEqual(TValue expectedValue, TValue actualValue) {
-            AssertException(expectedValue, actualValue).assert();
+            if (expectedValue != actualValue) {
+                throw AssertException(expectedValue, actualValue);
+            }
+            //AssertException(expectedValue, actualValue).assert();
         }
 
     public:
