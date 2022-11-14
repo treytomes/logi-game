@@ -1,5 +1,7 @@
 #include "testing/CircuitTests.h"
 
+// TODO: Try-catch around all tests to ensure the circuit gets deleted.
+
 CircuitTests::CircuitTests() {
     _factory = new ComponentFactory();
 }
@@ -17,6 +19,8 @@ void CircuitTests::runAll() {
     runTest("Circuit ==> SR Latch", &CircuitTests::testSRLatch);
     runTest("Circuit ==> Clock", &CircuitTests::testClock);
     runTest("Circuit ==> SR Flip-Flop", &CircuitTests::testSRFlipFlop);
+    runTest("Circuit ==> D Latch", &CircuitTests::testDLatch);
+    runTest("Circuit ==> Counter", &CircuitTests::testCounter);
 }
 
 void CircuitTests::testCircuitXNOR() {
@@ -76,16 +80,34 @@ void CircuitTests::testCircuitXOR() {
 }
 
 void CircuitTests::testClock() {
-    INetworkable* circuit = _factory->createClock();
-
-    for (int n = 0; n < 100; n++) {
-        assertEqual(1.0f, circuit->getOutput(0));
-        circuit->step();
-        assertEqual(0.0f, circuit->getOutput(0));
-        circuit->step();
+    for (int stepsPerTick = 1; stepsPerTick <= 3; stepsPerTick++) {
+        cout << stepsPerTick << "-step Clock" << endl;
+        INetworkable* circuit = _factory->createClock(stepsPerTick);
+        for (int n = 0; n < 32; n++) {
+            cout << "Step " << n << ": " << circuit->getOutput(0) << endl;
+            circuit->step();
+        }
+        delete circuit;
     }
+    
+    /*
+    for (int stepsPerTick = 1; stepsPerTick < 100; stepsPerTick++) {
+        INetworkable* circuit = _factory->createClock(stepsPerTick);
 
-    delete circuit;
+        for (int n = 0; n < 100; n++) {
+            for (int m = 0; m < stepsPerTick; m++) {
+                assertEqual(1.0f, circuit->getOutput(0));
+                circuit->step();
+            }
+            for (int m = 0; m < stepsPerTick; m++) {
+                assertEqual(0.0f, circuit->getOutput(0));
+                circuit->step();
+            }
+        }
+
+        delete circuit;
+    }
+    */
 }
 
 void CircuitTests::testSRLatch() {
@@ -248,5 +270,74 @@ void CircuitTests::testSRFlipFlop() {
     assertEqual(expectedQ0, q1);
     assertEqual(expectedQNot0, qNot1);
 
+    delete circuit;
+}
+
+void CircuitTests::testDLatch() {
+    /**
+     * 4 steps for the circuit to settle.
+     *
+     * D is input 0.
+     * ENABLE is input 1.
+     * Q! is output 0.
+     * Q is output 1.
+     */
+
+    INetworkable* circuit = _factory->createDLatch();
+
+    float q0;
+    float qNot0;
+
+    circuit->setInput(1, 1); // ENABLE=1
+    circuit->setInput(0, 1); // D=1
+    circuit->step();
+    circuit->step();
+    circuit->step();
+    circuit->step();
+    q0 = circuit->getOutput(1);
+    qNot0 = circuit->getOutput(0);
+    assertEqual(1.0f, q0);
+    assertEqual(0.0f, qNot0);
+
+    circuit->setInput(1, 1); // ENABLE=1
+    circuit->setInput(0, 0); // D=0
+    circuit->step();
+    circuit->step();
+    circuit->step();
+    circuit->step();
+    q0 = circuit->getOutput(1);
+    qNot0 = circuit->getOutput(0);
+    assertEqual(0.0f, q0);
+    assertEqual(1.0f, qNot0);
+
+    // At this point, D=0.  Now test to ensure the value remains latched.
+
+    circuit->setInput(1, 0); // ENABLE=0
+    circuit->setInput(0, 1); // D=1
+    circuit->step();
+    circuit->step();
+    circuit->step();
+    circuit->step();
+    q0 = circuit->getOutput(1);
+    qNot0 = circuit->getOutput(0);
+    assertEqual(0.0f, q0);
+    assertEqual(1.0f, qNot0);
+
+    circuit->setInput(1, 0); // ENABLE=0
+    circuit->setInput(0, 0); // D=0
+    circuit->step();
+    circuit->step();
+    circuit->step();
+    circuit->step();
+    q0 = circuit->getOutput(1);
+    qNot0 = circuit->getOutput(0);
+    assertEqual(0.0f, q0);
+    assertEqual(1.0f, qNot0);
+
+    delete circuit;
+}
+
+void CircuitTests::testCounter() {
+    INetworkable* circuit = _factory->createCounter();
     delete circuit;
 }

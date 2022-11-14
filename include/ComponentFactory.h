@@ -26,15 +26,15 @@ class ComponentFactory {
         /**
          * A simple clock that flips it's state on each step.
          */
-        INetworkable* createClock();
+        INetworkable* createClock(int stepsPerTick = 1);
 
         /**
          * The recursion in the circuit causes it to require 2 steps for the state to settle.
          *
          * RESET is input 0.
          * SET is input 1.
-         * Q is output 1.
          * Q! is output 0.
+         * Q is output 1.
          */
         INetworkable* createSRLatch();
 
@@ -44,10 +44,25 @@ class ComponentFactory {
          * RESET is input 0.
          * ENABLE is input 1.
          * SET is input 2.
-         * Q is output 1.
          * Q! is output 0.
+         * Q is output 1.
          */
         INetworkable* createSRFlipFlop();
+
+        /**
+         * 4 steps for the circuit to settle.
+         * 
+         * D is input 0.
+         * ENABLE is input 1.
+         * Q! is output 0.
+         * Q is output 1.
+         */
+        INetworkable* createDLatch();
+
+        /**
+         * An 8-bit counter.
+         */
+        INetworkable* createCounter();
 };
 
 #endif

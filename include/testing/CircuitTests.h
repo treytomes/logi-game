@@ -22,6 +22,8 @@ class CircuitTests: public TestSuiteBase<CircuitTests> {
         void testSRLatch();
         void testClock();
         void testSRFlipFlop();
+        void testDLatch();
+        void testCounter();
 };
 
 #endif

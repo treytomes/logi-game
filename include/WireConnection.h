@@ -2,7 +2,7 @@
 #define __PERCEPTRONWIRECONNECTION_H__
 
 #include "ArgumentNullException.h"
-#include "IHasInput.h"
+#include "INetworkable.h"
 #include "Perceptron.h"
 
 class WireConnection {

@@ -101,11 +101,95 @@ INetworkable* ComponentFactory::createXOR() {
     return circuit;
 }
 
-INetworkable* ComponentFactory::createClock() {
-    Circuit* circuit = new Circuit();
+INetworkable* ComponentFactory::createClock(int stepsPerTick) {
+    if (stepsPerTick < 1) {
+        throw exception("stepsPerTick must be >= 1");
+    }
 
-    INetworkable* not0 = circuit->addComponent(createNOT(), true);
-    circuit->connectFrom(not0, 0)->connectTo(not0, 0);
+    Circuit* circuit = new Circuit();
+    /**
+     * The flip-flop has one extra layer added for the enable line, so that's one more step for the state to settle.
+     *
+     * RESET is input 0.
+     * ENABLE is input 1.
+     * SET is input 2.
+     * Q! is output 0.
+     * Q is output 1.
+     */
+
+    if (stepsPerTick == 1) {
+        INetworkable* not0 = circuit->addComponent(createNOT(), true);
+        circuit->connectFrom(not0, 0)->connectTo(not0, 0);
+    } else if (stepsPerTick == 2) {
+        //INetworkable* not0 = circuit->addComponent(createNOT());
+        //circuit->connectFrom(not0, 0)->connectTo(not0, 0);
+        INetworkable* not0 = createClock(1);
+
+        INetworkable* srFlipFlop0 = circuit->addComponent(createSRFlipFlop(), true);
+        circuit->connectFrom(not0, 0)->connectTo(srFlipFlop0, 1); // Not to SR Flip-Flop Enable
+        circuit->connectFrom(srFlipFlop0, 1)->connectTo(srFlipFlop0, 0); // SR Flip-Flop Q to Reset
+        circuit->connectFrom(srFlipFlop0, 0)->connectTo(srFlipFlop0, 2); // SR Flip-Flop Q! to Set
+
+        //INetworkable* diode0 = circuit->addComponent(createDiode(), true);
+        //circuit->connectFrom(srFlipFlop0, 1)->connectTo(diode0, 0);
+    } else if (stepsPerTick == 3) {
+        INetworkable* not0 = circuit->addComponent(createNOT());
+        INetworkable* srFlipFlop0 = circuit->addComponent(createSRFlipFlop());
+        INetworkable* srFlipFlop1 = circuit->addComponent(createSRFlipFlop(), true);
+        //INetworkable* diode0 = circuit->addComponent(createDiode(), true);
+
+        // NOT loops back on itself to generate the clock signal.
+        circuit->connectFrom(not0, 0)->connectTo(not0, 0);
+
+        // Not to all enables.
+        circuit->connectFrom(not0, 0)->connectTo(srFlipFlop0, 1);
+        circuit->connectFrom(not0, 0)->connectTo(srFlipFlop1, 1);
+
+        // Final Q to all resets.
+        circuit->connectFrom(srFlipFlop1, 1)->connectTo(srFlipFlop0, 0);
+        circuit->connectFrom(srFlipFlop1, 1)->connectTo(srFlipFlop1, 0);
+
+        // Previous Q to current Set.
+        circuit->connectFrom(srFlipFlop0, 1)->connectTo(srFlipFlop1, 2);
+
+        // Final Q! to first Set.
+        circuit->connectFrom(srFlipFlop1, 0)->connectTo(srFlipFlop0, 2);
+
+        // Final Q to output diode.
+        //circuit->connectFrom(srFlipFlop0, 1)->connectTo(diode0, 0);
+    }
+    /*
+    } else if (stepsPerTick == 2) {
+        INetworkable* diode0 = circuit->addComponent(createDiode());
+        INetworkable* not0 = circuit->addComponent(createNOT(), true);
+
+        circuit->connectFrom(diode0, 0)->connectTo(not0, 0);
+        circuit->connectFrom(not0, 0)->connectTo(diode0, 0);
+    } else if (stepsPerTick == 3) {
+        INetworkable* diode0 = circuit->addComponent(createDiode());
+        INetworkable* diode1 = circuit->addComponent(createDiode());
+        INetworkable* not0 = circuit->addComponent(createNOT(), true);
+
+        circuit->connectFrom(diode0, 0)->connectTo(diode1, 0);
+        circuit->connectFrom(diode1, 0)->connectTo(not0, 0);
+        circuit->connectFrom(not0, 0)->connectTo(diode0, 0);
+    } else if (stepsPerTick == 4) {
+        INetworkable** diode = (INetworkable**)malloc(sizeof(INetworkable*) * (stepsPerTick - 1));
+        for (int n = 0; n < stepsPerTick - 1; n++) {
+            diode[n] = circuit->addComponent(createDiode());
+        }
+        INetworkable* not0 = circuit->addComponent(createNOT(), true);
+
+        for (int n = 0; n < stepsPerTick - 2; n++) {
+            circuit->connectFrom(diode[n], 0)->connectTo(diode[n + 1], 0);
+        }
+
+        circuit->connectFrom(diode[stepsPerTick - 2], 0)->connectTo(not0, 0);
+        circuit->connectFrom(not0, 0)->connectTo(diode[0], 0);
+
+        free(diode);
+    }
+    */
 
     return circuit;
 }
@@ -151,6 +235,39 @@ INetworkable* ComponentFactory::createSRFlipFlop() {
     circuit->connectFrom(and1, 0)->connectTo(srLatch0, 1);
     circuit->connectFrom(srLatch0, 0)->connectTo(qNot0, 0);
     circuit->connectFrom(srLatch0, 1)->connectTo(q0, 0);
+
+    return circuit;
+}
+
+INetworkable* ComponentFactory::createDLatch() {
+    Circuit* circuit = new Circuit();
+
+    ConstantOutputSource* d0 = circuit->addInput();
+    ConstantOutputSource* e0 = circuit->addInput();
+
+    INetworkable* qNot0 = circuit->addComponent(createDiode(), true);
+    INetworkable* q0 = circuit->addComponent(createDiode(), true);
+
+    INetworkable* not0 = circuit->addComponent(createNOT());
+    INetworkable* srFlipFlop0 = circuit->addComponent(createSRFlipFlop());
+
+    circuit->connectFrom(d0, 0)->connectTo(not0, 0);
+    circuit->connectFrom(d0, 0)->connectTo(srFlipFlop0, 2);
+    circuit->connectFrom(e0, 0)->connectTo(srFlipFlop0, 1);
+
+    circuit->connectFrom(not0, 0)->connectTo(srFlipFlop0, 0);
+
+    circuit->connectFrom(srFlipFlop0, 0)->connectTo(qNot0, 0);
+    circuit->connectFrom(srFlipFlop0, 1)->connectTo(q0, 0);
+
+    return circuit;
+}
+
+INetworkable* ComponentFactory::createCounter() {
+    Circuit* circuit = new Circuit();
+
+    //ConstantOutputSource* clk0 = circuit->addInput();
+
 
     return circuit;
 }
