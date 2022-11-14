@@ -59,9 +59,6 @@
     <ClInclude Include="include\ConstantOutputSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\IHasOutput.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\OutOfRangeException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -72,9 +69,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\WireConnection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\IHasInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\INetworkable.h">

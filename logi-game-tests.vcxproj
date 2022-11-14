@@ -31,8 +31,6 @@
     <ClInclude Include="include\Circuit.h" />
     <ClInclude Include="include\ComponentFactory.h" />
     <ClInclude Include="include\ConstantOutputSource.h" />
-    <ClInclude Include="include\IHasInput.h" />
-    <ClInclude Include="include\IHasOutput.h" />
     <ClInclude Include="include\INetworkable.h" />
     <ClInclude Include="include\OutOfRangeException.h" />
     <ClInclude Include="include\Perceptron.h" />

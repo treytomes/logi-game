@@ -4,7 +4,6 @@
 #include <vector>
 using namespace std;
 
-#include "IHasOutput.h"
 #include "Perceptron.h"
 #include "WireConnection.h"
 

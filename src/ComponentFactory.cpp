@@ -22,7 +22,7 @@ INetworkable* ComponentFactory::loadFile(string path) {
     vector<float> weights = contents["weights"].get<vector<float>>();
 
     if (type == "perceptron") {
-        Perceptron* p0 = new Perceptron(weights.size());
+        Perceptron* p0 = new Perceptron((int)weights.size());
         p0->setBias(bias);
         for (int n = 0; n < weights.size(); n++) {
             p0->setWeight(n, weights[n]);
@@ -101,6 +101,7 @@ INetworkable* ComponentFactory::createXOR() {
     return circuit;
 }
 
+// TODO: Requiring a tick for each wire is really slowing things down.
 INetworkable* ComponentFactory::createClock(int stepsPerTick) {
     if (stepsPerTick < 1) {
         throw exception("stepsPerTick must be >= 1");
