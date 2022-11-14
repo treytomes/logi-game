@@ -38,10 +38,6 @@ class Perceptron: public INetworkable {
             }
         }
 
-        inline int getNumInputs() {
-            return _numInputs;
-        }
-
         inline void setBias(float value) {
             _bias = value;
         }
@@ -71,12 +67,18 @@ class Perceptron: public INetworkable {
             _inputs[inputNumber] = value;
         }
 
+        inline int getNumInputs() {
+            return _numInputs;
+        }
+
         inline float getInput(int n) {
             if ((n < 0) || (n >= getNumInputs())) {
                 throw OutOfRangeException(n, 0, getNumInputs());
             }
             return _inputs[n];
         }
+
+        inline int getNumOutputs() { return 1; }
 
         inline float getOutput(int outputNumber = 0) {
             OutOfRangeException(outputNumber, 0, 1).assert();
