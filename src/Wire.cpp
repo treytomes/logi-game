@@ -46,7 +46,7 @@ void Wire::disconnect(INetworkable* target) {
 void Wire::step() {
     WireConnection* outputConnection = getSource();
     INetworkable* source = outputConnection->getTarget();
-    float value = source->getOutput(getSource()->getPortNumber());
+    float value = source->getOutput(outputConnection->getPortNumber());
 
     for (auto iter = _targets.begin(); iter != _targets.end(); iter++) {
         WireConnection* conn = *iter;

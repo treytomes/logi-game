@@ -1,5 +1,5 @@
-#ifndef __PERCEPTRONWIRE_H__
-#define __PERCEPTRONWIRE_H__
+#ifndef __WIRE_H__
+#define __WIRE_H__
 
 #include <vector>
 using namespace std;

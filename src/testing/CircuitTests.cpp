@@ -83,8 +83,18 @@ void CircuitTests::testClock() {
     for (int stepsPerTick = 1; stepsPerTick <= 3; stepsPerTick++) {
         cout << stepsPerTick << "-step Clock" << endl;
         INetworkable* circuit = _factory->createClock(stepsPerTick);
+
+        // Prime the clock.
+        /*for (int n = 0; n < stepsPerTick; n++) {
+            circuit->step();
+        }*/
+
         for (int n = 0; n < 32; n++) {
-            cout << "Step " << n << ": " << circuit->getOutput(0) << endl;
+            cout << "Step " << n << ": ";
+            for (int m = 0; m < circuit->getNumOutputs(); m++) {
+                cout << circuit->getOutput(m) << ", ";
+            }
+            cout << endl;
             circuit->step();
         }
         delete circuit;
